@@ -1,5 +1,6 @@
 package mes;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,36 +9,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class database {
-
+	
+	private static String url = "jdbc:postgresql://db.fe.up.pt:5432/up201707358";
+    private static String user = "up201707358";
+    private static String password = "G229Gee2h";
+	protected static int count;
+	
 	public static ArrayList<piece> getpieces(){
-		ArrayList<ProductList> pieces= new ArrayList<>();
+		ArrayList<piece> pieces= new ArrayList<>();
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
-			String query="SELECT * FROM tblproduct ";
-			if(cat==1) {
-				query+="WHERE category = 'computers' ORDER BY productid DESC LIMIT 3";
-			}
-			
-			if(cat==2) {
-				query+="WHERE category = 'mobile' ORDER BY productid DESC LIMIT 3";
-			}
-			
-			if(cat==3) {
-				query+="WHERE category = 'components' ORDER BY productid DESC LIMIT 3";
-			}
-			
-			if(cat==0) {
-				query+="ORDER BY productid DESC";
-			}
-			
+			String query="SELECT * FROM day_pieces ";
+						
 			PreparedStatement ps = con.prepareStatement(query);
-			ProductList newEntry;
+			piece newEntry;
 			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				newEntry = new piece(rs.getString("brand"), rs.getString("model"), rs.getDouble("price"), 
-							rs. getInt("stock"),rs.getString("description"), rs.getInt("batrank"), rs.getInt("procrank"),rs.getString("type"), rs.getInt("ranking"), rs.getString("category"));
 			
-			list.add(newEntry);
+			while(rs.next()) {
+				int[] buff;
+				for(int i=0;i<rs.getInt("nr_pieces");i++) {
+					newEntry = new piece(rs.getInt("order_id"), buff, rs.getInt("priority"), rs.getInt("final_form"), 0);
+					pieces.add(newEntry);
+				}
+				
 			
 			}
 			con.close();

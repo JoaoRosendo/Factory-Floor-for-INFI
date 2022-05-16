@@ -2,11 +2,21 @@ package mes;
 
 public class piece {
 	
-	static int orderid;
-	static int[] machines; // tem em cada posição a próxima máquinas que vai utilizar
-	static int priority;
-	static int final_form;
-	static int curr_form;
+	int orderid;
+	
+	int[] machines; // tem em cada posição a próxima máquinas que vai utilizar
+	int priority;
+	int final_form;
+	int curr_form;
+	
+	public piece(int orderid, int[] machines, int priority, int final_form, int curr_form) {
+		super();
+		this.orderid = orderid;
+		this.machines = machines;
+		this.priority = priority;
+		this.final_form = final_form;
+		this.curr_form = curr_form;
+	}
 	
 	public int getOrderid() {
 		return orderid;
