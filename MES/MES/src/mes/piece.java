@@ -39,11 +39,11 @@ public class piece {
 	public int getFinal_form() {
 		return final_form;
 	}
-	public static int getCurr_form() {
+	public int getCurr_form() {
 		return curr_form;
 	}
-	public static void setCurr_form(int curr_form) {
-		piece.curr_form = curr_form;
+	public void setCurr_form(int curr_form) {
+		this.curr_form = curr_form;
 	}
 	public void setFinal_form(int final_form) {
 		this.final_form = final_form;

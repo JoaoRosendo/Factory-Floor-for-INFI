@@ -26,9 +26,9 @@ public class database {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
-				int[] buff;
+				int[] buff = {0,0,0,0,0,0};
 				for(int i=0;i<rs.getInt("nr_pieces");i++) {
-					newEntry = new piece(rs.getInt("order_id"), buff, rs.getInt("priority"), rs.getInt("final_form"), 0);
+					newEntry = new piece(rs.getInt("order_id"), buff, /*rs.getInt("priority")*/1, rs.getInt("final_form"), 0);
 					pieces.add(newEntry);
 				}
 				
@@ -37,7 +37,7 @@ public class database {
 			con.close();
 		}
 		catch(SQLException e) {
-			System.out.println("ComputerData.homePage: "+e.getMessage());
+			System.out.println("database.day_pieces: "+e.getMessage());
 		}
 		
 		
