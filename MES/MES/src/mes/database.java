@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class database {
 	
-	private static String url = "jdbc:postgresql://db.fe.up.pt:5432/up201707358";
-    private static String user = "up201707358";
-    private static String password = "G229Gee2h";
+	private static String url = "jdbc:postgresql://db.fe.up.pt:5432/up201806577";
+    private static String user = "up201806577";
+    private static String password = "dpPk0HcRN";
 	protected static int count;
 	
 	public static ArrayList<piece> getpieces(){

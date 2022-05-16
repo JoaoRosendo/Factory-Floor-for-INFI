@@ -26,9 +26,9 @@ public class sorter {
 		int i,j;
 		day_pieces=decide_mach(tools, day_pieces);
 		for(j=0;j<day_pieces.size();j++) {
-			System.out.print("day piece "+j+":ordee_id:"+day_piece[j].orderid+"   priority:"
-					+day_piece[j].priority+"   final_form:"+day_piece[j].final_form
-					+"   curr_form:"+day_piece[j].curr_form+ "   machines:");
+			System.out.print("day piece "+j+":ordee_id:"+day_pieces[j].orderid+"   priority:"
+					+day_pieces[j].priority+"   final_form:"+day_pieces[j].final_form
+					+"   curr_form:"+day_pieces[j].curr_form+ "   machines:");
 			for(i=0;i<day_pieces[j].machines.size();i++)	System.out.print(day_pieces[j].machines[i]);		
 			System.out.println();
 		}
@@ -41,7 +41,7 @@ private static void decide_tools(Object object, ArrayList<piece> day_pieces2) {
 private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pieces) {
 	
 	for(int j=0;j<day_pieces.size();j++) {
-		for(int i=0;i<day_pieces.machines.length;i++) day_pieces[j].machines[i]=0;		
+		for(int i=0;i<day_pieces[j].machines.size();i++) day_pieces[j].machines[i]=0;		
 	}
 	
 	for(int j=0;j<day_pieces.size();j++) {
