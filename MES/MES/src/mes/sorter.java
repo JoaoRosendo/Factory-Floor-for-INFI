@@ -99,10 +99,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 				{
 					if(tools[i]==2) {
 						day_pieces.get(j).machines[0]=i;
-					}
-					else if(tools[i]==1 && day_pieces.get(j).machines[0]!=0) {
-						day_pieces.get(j).machines[1]=i;
-						break;
+						for(i=0;i<6;i++) {
+							if(tools[i]==1 && day_pieces.get(j).machines[0]!=0) {
+								day_pieces.get(j).machines[1]=i;
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -115,11 +117,14 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			{
 				if(tools[i]==3) {
 					day_pieces.get(j).machines[0]=i;
+					for(i=0;i<6;i++) {
+						if(tools[i]==4 && day_pieces.get(j).machines[0]!=0) {
+							day_pieces.get(j).machines[1]=i;
+							break;
+						}
+					}
 				}
-				else if(tools[i]==4 && day_pieces.get(j).machines[0]!=0) {
-					day_pieces.get(j).machines[1]=i;
-					break;
-				}
+				
 			}
 		}	
 		
@@ -130,10 +135,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			{
 				if(tools[i]==1) {
 					day_pieces.get(j).machines[0]=i;
-				}
-				else if(tools[i]==3 && day_pieces.get(j).machines[0]!=0) {
-					day_pieces.get(j).machines[1]=i;
-					break;
+					for(i=0;i<6;i++) {
+						if(tools[i]==3 && day_pieces.get(j).machines[0]!=0) {
+							day_pieces.get(j).machines[1]=i;
+							break;
+						}
+					}
 				}
 			}
 		}	
