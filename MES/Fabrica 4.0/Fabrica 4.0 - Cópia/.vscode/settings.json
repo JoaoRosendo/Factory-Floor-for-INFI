@@ -1,0 +1,23 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "c:\\Users\\Pedro Almeida Silva\\Downloads\\bcprov-ext-jdk18on-171.jar",
+            "repository/milo-master.jar",
+            "repository/javafx.base.jar",
+            "repository/javafx.controls.jar",
+            "repository/javafx.fxml.jar",
+            "repository/javafx.graphics.jar",
+            "repository/javafx.media.jar",
+            "repository/javafx.swing.jar",
+            "repository/javafx.web.jar",
+            "repository/javafx-swt.jar"
+        ],
+        "exclude": [
+            "c:\\Users\\Pedro Almeida Silva\\.m2\\repository\\commons-logging\\commons-logging\\1.2\\commons-logging-1.2.jar",
+            "repository/org/bouncycastle/bcprov-jdk15to18/1.64/bcprov-jdk15to18-1.64.jar"
+        ]
+    }
+}

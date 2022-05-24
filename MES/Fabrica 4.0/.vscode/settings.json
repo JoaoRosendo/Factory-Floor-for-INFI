@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\Ana Sofia\\Downloads\\milo-master.jar",
+        "c:\\Users\\Ana Sofia\\Downloads\\INFI-main\\INFI-main\\MES\\MES\\postgresql-42.3.1.jar",
+        "c:\\Users\\Ana Sofia\\Downloads\\INFI-main\\INFI-main\\MES\\MES\\swt.jar"
+    ]
+}

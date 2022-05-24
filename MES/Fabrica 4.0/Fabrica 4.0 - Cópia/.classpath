@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="repository/javafx-swt.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.base.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.controls.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.fxml.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.graphics.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.media.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.swing.jar"/>
+	<classpathentry kind="lib" path="repository/javafx.web.jar"/>
+	<classpathentry kind="lib" path="repository/milo-master.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
