@@ -25,16 +25,16 @@ public class database {
 			
 			while(rs.next()) {
 				int i=0;
-				short[] buff = {0,0,0,0,0,0};
+				short[] buff = {0,0,0,0,0};
 				for(i=0;i<rs.getInt("nr_pieces");i++) {
 					if(i==12) return pieces;
-					newEntry = new piece(rs.getInt("order_id"), buff, /*rs.getInt("priority")*/1, rs.getInt("final_form"), 0);
+					newEntry = new piece((short)rs.getInt("order_id"), buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)0);
 					pieces.add(newEntry);
 				}
 				if (i<12) {
 					while(i<12) {
 						if(i==12) return pieces;
-						newEntry = new piece(0, buff, 0, 0, 0);
+						newEntry = new piece((short)0, buff, (short)0, (short)0, (short)0);
 						pieces.add(newEntry);
 						i++;
 					}

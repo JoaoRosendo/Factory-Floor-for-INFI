@@ -2,14 +2,14 @@ package MES;
 
 public class piece {
     
-    int orderid;
+	short orderid;
 	
 	short[] machines; // tem em cada posição a próxima máquinas que vai utilizar
-	int priority;
-	int final_form;
-	int curr_form;
+	short priority;
+	short final_form;
+	short curr_form;
 	
-	public piece(int orderid, short[] machines, int priority, int final_form, int curr_form) {
+	public piece(short orderid, short[] machines, short priority, short final_form, short curr_form) {
 		super();
 		this.orderid = orderid;
 		this.machines = machines;
@@ -18,10 +18,10 @@ public class piece {
 		this.curr_form = curr_form;
 	}
 	
-	public int getOrderid() {
+	public short getOrderid() {
 		return orderid;
 	}
-	public void setOrderid(int orderid) {
+	public void setOrderid(short orderid) {
 		this.orderid = orderid;
 	}
 	public short[] getMachines() {
@@ -30,22 +30,22 @@ public class piece {
 	public void setMachines(short[] machines) {
 		this.machines = machines;
 	}
-	public int getPriority() {
+	public short getPriority() {
 		return priority;
 	}
-	public void setPriority(int priority) {
+	public void setPriority(short priority) {
 		this.priority = priority;
 	}
-	public int getFinal_form() {
+	public short getFinal_form() {
 		return final_form;
 	}
-	public int getCurr_form() {
+	public short getCurr_form() {
 		return curr_form;
 	}
-	public void setCurr_form(int curr_form) {
+	public void setCurr_form(short curr_form) {
 		this.curr_form = curr_form;
 	}
-	public void setFinal_form(int final_form) {
+	public void setFinal_form(short final_form) {
 		this.final_form = final_form;
 	}
 }

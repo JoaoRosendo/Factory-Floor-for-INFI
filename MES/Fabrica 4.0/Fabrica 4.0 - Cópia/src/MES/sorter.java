@@ -24,7 +24,7 @@ public class sorter {
 //	 		
 //		}
 		day_pieces=database.getpieces();
-		int[] tools= {1,1,4,2,3,3};
+		int[] tools= {1,3,4,2,3,2};
 		
 		day_pieces=decide_mach(tools, day_pieces);
 		print_daypieces(day_pieces);
@@ -64,15 +64,31 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 	for(int j=0;j<day_pieces.size();j++) {
 		for(i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
 	}
+	for(int j=0;j<day_pieces.size();j++) {
+	day_pieces.get(j).machines[1]=day_pieces.get(j).curr_form;	
+	day_pieces.get(j).machines[2]=day_pieces.get(j).final_form;	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ORdem e qual a informação a passar	
+	}
+	
+	int[] contador= {0,0,0,0,0,0};
+	int[] maq_min= {0,0,0,0};
+	
+ 	short[] n= {0,0,0,0,0};
 	
 	for(int j=0;j<day_pieces.size();j++) {
+		
+		if(day_pieces.get(j).final_form==0) {
+			day_pieces.get(j).machines=n;
+			break;
+		}
+		maq_min=check_maq_min(maq_min, contador, tools);
 		//PIECE 3
 		if(day_pieces.get(j).final_form==3) 
 		{
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==2) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[1];
+					contador[i]++;
 					break;
 				}
 			}
@@ -84,7 +100,8 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==3) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[2];
+					contador[i]++;
 					break;
 				}
 			}
@@ -96,7 +113,8 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==4) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[3];
+					contador[i]++;
 					break;
 				}
 			}
@@ -105,11 +123,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 		//PIECE 6
 		else if(day_pieces.get(j).final_form==6) 
 		{	
-			if(warehouse.p1>0) {
+			if(warehouse.p2<1) {
 				for (i=0; i<6; i++) 
 				{
 					if(tools[i]==1) {
-						day_pieces.get(j).machines[0]=i;
+						day_pieces.get(j).machines[2]=(short) maq_min[0];
+						contador[i]++;
 						break;
 					}
 				}
@@ -118,10 +137,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 				for (i=0; i<6; i++) 
 				{
 					if(tools[i]==2) {
-						day_pieces.get(j).machines[0]=i;
+						day_pieces.get(j).machines[2]=(short) maq_min[1];
+						contador[i]++;
 						for(i=0;i<6;i++) {
-							if(tools[i]==1 && day_pieces.get(j).machines[0]!=0) {
-								day_pieces.get(j).machines[1]=i;
+							if(tools[i]==1 && day_pieces.get(j).machines[2]!=0) {
+								day_pieces.get(j).machines[3]=(short) maq_min[0];
+								contador[i]++;
 								break;
 							}
 						}
@@ -136,10 +157,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==3) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[2];
+					contador[i]++;
 					for(i=0;i<6;i++) {
-						if(tools[i]==4 && day_pieces.get(j).machines[0]!=0) {
-							day_pieces.get(j).machines[1]=i;
+						if(tools[i]==4 && day_pieces.get(j).machines[2]!=0) {
+							day_pieces.get(j).machines[3]=(short) maq_min[3];
+							contador[i]++;
 							break;
 						}
 					}
@@ -154,10 +177,12 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==1) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[0];
+					contador[i]++;
 					for(i=0;i<6;i++) {
-						if(tools[i]==3 && day_pieces.get(j).machines[0]!=0) {
-							day_pieces.get(j).machines[1]=i;
+						if(tools[i]==3 && day_pieces.get(j).machines[2]!=0) {
+							day_pieces.get(j).machines[3]=(short) maq_min[2];
+							contador[i]++;
 							break;
 						}
 					}
@@ -171,13 +196,16 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 			for (i=0; i<6; i++) 
 			{
 				if(tools[i]==3) {
-					day_pieces.get(j).machines[0]=i;
+					day_pieces.get(j).machines[2]=(short) maq_min[2];
+					contador[i]++;
 					for (i=0; i<6; i++) {
-						if(tools[i]==4 && day_pieces.get(j).machines[0]!=0) {
-							day_pieces.get(j).machines[1]=i;
+						if(tools[i]==4 && day_pieces.get(j).machines[2]!=0) {
+							day_pieces.get(j).machines[3]=(short) maq_min[3];
+							contador[i]++;
 							for (i=0; i<6; i++) {
-								if(tools[i]==4 && day_pieces.get(j).machines[1]!=0) {
-									day_pieces.get(j).machines[2]=i;
+								if(tools[i]==4 && day_pieces.get(j).machines[3]!=0) {
+									day_pieces.get(j).machines[4]=(short) maq_min[3];
+									contador[i]++;
 									break;
 								}
 							}
@@ -190,5 +218,39 @@ private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pi
 		}
 	}
 	return day_pieces;
+}
+
+private static int[] check_maq_min(int[] maq_min, int[] contador, int[] tools ) {
+	
+	for(int i=0;i<tools.length;i++) {
+		
+		if(tools[i]==1) {
+			for(int j=0;j<6;j++) {
+				if(contador[i]<contador[j])maq_min[0]=i;
+				else maq_min[0]=j;
+			}
+		}
+		if(tools[i]==2) {
+			for(int j=0;j<6;j++) {
+				if(contador[i]<contador[j])maq_min[1]=i;
+				else maq_min[1]=j;
+			}
+		}
+		if(tools[i]==3) {
+			for(int j=0;j<6;j++) {
+				if(contador[i]<maq_min[2])maq_min[2]=i;
+				else maq_min[2]=j;
+			}
+		}		
+		if(tools[i]==4) {
+			for(int j=0;j<6;j++) {
+				if(contador[i]<maq_min[3])maq_min[3]=i;
+				else maq_min[3]=j;
+			}
+		}		
+		
+	}
+	
+	return maq_min;
 }
 }
