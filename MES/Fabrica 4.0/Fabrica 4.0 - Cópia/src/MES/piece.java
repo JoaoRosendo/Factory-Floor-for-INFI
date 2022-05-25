@@ -4,12 +4,12 @@ public class piece {
     
     int orderid;
 	
-	int[] machines; // tem em cada posição a próxima máquinas que vai utilizar
+	short[] machines; // tem em cada posição a próxima máquinas que vai utilizar
 	int priority;
 	int final_form;
 	int curr_form;
 	
-	public piece(int orderid, int[] machines, int priority, int final_form, int curr_form) {
+	public piece(int orderid, short[] machines, int priority, int final_form, int curr_form) {
 		super();
 		this.orderid = orderid;
 		this.machines = machines;
@@ -24,10 +24,10 @@ public class piece {
 	public void setOrderid(int orderid) {
 		this.orderid = orderid;
 	}
-	public int[] getMachines() {
+	public short[] getMachines() {
 		return machines;
 	}
-	public void setMachines(int[] machines) {
+	public void setMachines(short[] machines) {
 		this.machines = machines;
 	}
 	public int getPriority() {

@@ -1,5 +1,8 @@
 package MES;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import org.eclipse.milo.opcua.stack.core.UaException;
 
 public class sorter {
     public static ArrayList<piece> day_pieces;
@@ -22,16 +25,34 @@ public class sorter {
 //		}
 		day_pieces=database.getpieces();
 		int[] tools= {1,1,4,2,3,3};
-		int i,j;
+		
 		day_pieces=decide_mach(tools, day_pieces);
-		for(j=0;j<day_pieces.size();j++) {
-			System.out.print("day piece "+j+":   order_id:"+day_pieces.get(j).orderid+"   priority:"
-					+day_pieces.get(j).priority+"   final_form:"+day_pieces.get(j).final_form
-					+"   curr_form:"+day_pieces.get(j).curr_form+ "   machines:");
-			for(i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);		
-			System.out.println();
-			System.out.println();
+		print_daypieces(day_pieces);
+		
+		try {
+			App.send_pieces(day_pieces);
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		}
+		
+private static void print_daypieces(ArrayList<piece> day_pieces2) {
+	int i,j;
+	for(j=0;j<day_pieces.size();j++) {
+		System.out.print("day piece "+j+":   order_id:"+day_pieces.get(j).orderid+"   priority:"
+				+day_pieces.get(j).priority+"   final_form:"+day_pieces.get(j).final_form
+				+"   curr_form:"+day_pieces.get(j).curr_form+ "   machines:");
+		for(i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);		
+		System.out.print("\n");
+	}
+
 }
 
 private static void decide_tools(Object object, ArrayList<piece> day_pieces2) {
@@ -39,7 +60,7 @@ private static void decide_tools(Object object, ArrayList<piece> day_pieces2) {
 	}
 
 private static ArrayList<piece> decide_mach(int[] tools, ArrayList<piece> day_pieces) {
-	int i=0;
+	short i=0;
 	for(int j=0;j<day_pieces.size();j++) {
 		for(i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
 	}

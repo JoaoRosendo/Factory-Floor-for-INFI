@@ -24,12 +24,21 @@ public class database {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
-				int[] buff = {0,0,0,0,0,0};
-				for(int i=0;i<rs.getInt("nr_pieces");i++) {
+				int i=0;
+				short[] buff = {0,0,0,0,0,0};
+				for(i=0;i<rs.getInt("nr_pieces");i++) {
+					if(i==12) return pieces;
 					newEntry = new piece(rs.getInt("order_id"), buff, /*rs.getInt("priority")*/1, rs.getInt("final_form"), 0);
 					pieces.add(newEntry);
 				}
-				
+				if (i<12) {
+					while(i<12) {
+						if(i==12) return pieces;
+						newEntry = new piece(0, buff, 0, 0, 0);
+						pieces.add(newEntry);
+						i++;
+					}
+				}
 			
 			}
 			con.close();
@@ -42,4 +51,6 @@ public class database {
 		
 		return pieces;
 	}
+	
+	
 }
