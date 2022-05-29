@@ -14,7 +14,7 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
 public class App {
 	
-	static String[] ids=new String[] {
+	static String[] array_ids=new String[] {
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C1",
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C2",
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C3",
@@ -28,19 +28,25 @@ public class App {
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C11",
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C12"};
 	
+	static String[] statistics= {
+			"",
+			""
+			};
+	static OpcUaClient client;
+	
 	static String tools_time_ant=null;
 	static String pieces_time_ant=null;
     public static int send_pieces(ArrayList<piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns the nr of pieces not correctly sent
     	//TRY CATCH ROUTINE NEEDED
     	
-    	OpcUaClient client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
+    	client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
         client.connect().get();
     	int errors=0;
         
         for (int i=0;i<12;i++) {
        
-        NodeId nodeId = new NodeId(4,ids[i]);
+        NodeId nodeId = new NodeId(4,array_ids[i]);
         String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
         
         short[] machines= day_pieces.get(i).machines;
@@ -79,11 +85,10 @@ public class App {
     }
     
     /////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
-    public static int check_ToD() {
+    public static int check_ToD() throws UaException, InterruptedException, ExecutionException {
     	//TRY CATCH ROUTINE NEEDED
     	int result=0;
     	
-		OpcUaClient client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
         client.connect().get();
         NodeId nodeId_midday = new NodeId(4,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         String tools_time = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);
@@ -102,6 +107,18 @@ public class App {
        return 0;
 		
 	}
+    
+    
+    
+    public static short[] check_stats(short[] data) throws UaException, InterruptedException, ExecutionException {
+    	
+        client.connect().get();
+        NodeId nodeId_midday = new NodeId(4,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        String tools_time = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);
+        
+    	
+    	return data;
+    }
     
     
 }

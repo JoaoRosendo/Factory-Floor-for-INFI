@@ -17,24 +17,25 @@ public class database {
 		ArrayList<piece> pieces= new ArrayList<>();
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
-			String query="SELECT * FROM day_pieces ";
+			String query="SELECT * FROM day_pieces ORDER BY nr_pieces DESC";
 						
 			PreparedStatement ps = con.prepareStatement(query);
 			piece newEntry;
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
-				int i=0;
-				short[] buff = {0,0,0,0,0};
+				short i=0;
+				short[] buff = {0,0,0,0,0,0};
 				for(i=0;i<rs.getInt("nr_pieces");i++) {
 					if(i==12) return pieces;
-					newEntry = new piece((short)rs.getInt("order_id"), buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)0);
+					newEntry = new piece((short)rs.getInt("order_id"),i, buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)0);
 					pieces.add(newEntry);
+					
 				}
 				if (i<12) {
 					while(i<12) {
 						if(i==12) return pieces;
-						newEntry = new piece((short)0, buff, (short)0, (short)0, (short)0);
+						newEntry = new piece((short)0,(short)0, buff, (short)0, (short)0, (short)0);
 						pieces.add(newEntry);
 						i++;
 					}

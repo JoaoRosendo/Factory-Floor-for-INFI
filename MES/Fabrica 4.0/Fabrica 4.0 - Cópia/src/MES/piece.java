@@ -3,13 +3,13 @@ package MES;
 public class piece {
     
 	short orderid;
-	
+	short pieceid;
 	short[] machines; // tem em cada posição a próxima máquinas que vai utilizar
 	short priority;
 	short final_form;
 	short curr_form;
 	
-	public piece(short orderid, short[] machines, short priority, short final_form, short curr_form) {
+	public piece(short orderid, short pieceid, short[] machines, short priority, short final_form, short curr_form) {
 		super();
 		this.orderid = orderid;
 		this.machines = machines;
@@ -18,6 +18,14 @@ public class piece {
 		this.curr_form = curr_form;
 	}
 	
+	public short getPieceid() {
+		return pieceid;
+	}
+
+	public void setPieceid(short pieceid) {
+		this.pieceid = pieceid;
+	}
+
 	public short getOrderid() {
 		return orderid;
 	}
