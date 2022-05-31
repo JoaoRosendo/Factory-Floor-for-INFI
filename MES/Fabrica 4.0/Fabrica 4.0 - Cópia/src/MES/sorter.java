@@ -9,6 +9,7 @@ import java.util.*;
 
 class MyThread extends Thread{
 	public void statistics() {
+		
 		while(true) {
 			
 			
@@ -25,7 +26,8 @@ class MyThread extends Thread{
 public class sorter {
     public static ArrayList<piece> day_pieces;
     public static warehouse w1;
-    
+    public static ArrayList<machine> machines;
+    public static short[] dock={0,0,0,0,0,0,0,0,0};
     
 	public static void main(String[] args) {
 	
@@ -52,6 +54,7 @@ public class sorter {
 //		System.out.println();
 //		System.out.println();
 		day_pieces=decide_mach( day_pieces);
+		
 		print_daypieces(day_pieces);
 		
 //		try {
@@ -135,18 +138,21 @@ private static ArrayList<piece> decide_mach(ArrayList<piece> day_pieces) {
 				day_pieces.get(j).machines[3]=4;	
 				day_pieces.get(j).machines[4]=3;	
 			}
-			
+
 			if(day_pieces.get(j).orderid==day_pieces.get(0).orderid) {
 				if(dock[0]<4 ) {day_pieces.get(j).machines[5]=1; dock[0]++;System.out.print("dock:1  \n");}
 				else if(dock[0]==4 && dock[1]<4 ) {day_pieces.get(j).machines[5]=2; dock[1]++;System.out.print("dock:2  \n");}
 				else if(dock[1]==4 && dock[2]<4) {day_pieces.get(j).machines[5]=3; dock[2]++;}
-	
+		
 			}
 			if(day_pieces.get(j).orderid!=day_pieces.get(0).orderid && day_pieces.get(j).orderid!=0) {
 				if(dock[0]<5) {day_pieces.get(j).machines[5]=1; dock[0]++;}
-				else if(dock[0]>5 ) {day_pieces.get(j).machines[5]=2; dock[1]++;}	
+				else if(dock[0]>5 ) {day_pieces.get(j).machines[5]=2; dock[1]++;}
 			}
 		}
+		
+		for(i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);
+		System.out.println();
 	}
 	
 	return day_pieces;
