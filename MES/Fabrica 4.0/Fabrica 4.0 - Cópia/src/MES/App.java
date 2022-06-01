@@ -12,6 +12,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 //opc.tcp://Vasco-Laptop:4840
 
+import lombok.ToString;
+
 public class App {
 	
 	static String[] array_ids=new String[] {
@@ -57,9 +59,13 @@ public class App {
 	
 	static String tools_time_ant=null;
 	static String pieces_time_ant=null;
-    public static int send_pieces(ArrayList<piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
+    public static int send_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns the nr of pieces not correctly sent
     	//TRY CATCH ROUTINE NEEDED
+    	
+    	for(int j=0;j<day_pieces.size();j++) {
+    		for(int i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
+    	}
     	
     	client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
         client.connect().get();
@@ -131,7 +137,7 @@ public class App {
 		
 	}
     
-    public ArrayList<machine> mach_stats(ArrayList<machine> machines) throws InterruptedException, ExecutionException{
+    public ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
 		client.connect().get();
@@ -142,7 +148,7 @@ public class App {
 			
 			//Read array of nr of pieces of each type and save
 			String type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			for(int j=0;i<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(type_count[j]);}
+			for(int j=0;i<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+type_count.charAt(j));}
 			for(int j=0;i<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
 			machines.get(i).pieces_total=total;
 			total=0;
@@ -150,7 +156,7 @@ public class App {
 			
 			//Read tool in use
 			type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			machines.get(i).tool=toString().valueOf(type_count);
+			machines.get(i).tool=Short.parseShort(""+type_count.charAt(5));
 			
 		}
 		
@@ -158,7 +164,7 @@ public class App {
 		return machines;
 	}
     
-    public ArrayList<dock> dock_stats(ArrayList<dock> docks) throws InterruptedException, ExecutionException{
+    public ArrayList<Dock> dock_stats(ArrayList<Dock> docks) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
 		client.connect().get();
@@ -169,7 +175,7 @@ public class App {
 			
 			//Read array of nr of pieces of each type and save
 			String type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			for(int j=0;i<docks.get(i).nr_types.length;j++) {docks.get(i).nr_types[j]=Short.parseShort(type_count[j]);}
+			for(int j=0;i<docks.get(i).nr_types.length;j++) {docks.get(i).nr_types[j]=Short.parseShort(""+type_count.charAt(j));}
 			for(int j=0;i<docks.get(i).nr_types.length;j++) {total+=docks.get(i).nr_types[j];}
 			docks.get(i).total=total;
 			total=0;
@@ -180,8 +186,33 @@ public class App {
 		return docks;
 	}
     
-    
-    
+    public static int check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
+    	//returns number of finished pieces
    
+    	client.connect().get();
+    	int finished=0;
+        
+        for (int i=0;i<12;i++) {
+        	//checks all pieces to see if they're finished
+        NodeId nodeId = new NodeId(4,array_ids[i]);
+        //reads the array
+        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");//!!!!!!!!!!CUT RIGHT WAY
+      
+        if((""+variable.charAt(1))=="1") {
+        	finished++;
+        	day_pieces.get(i).finished=1;
+        }
+        
+        int result=Database.update_stats_EoD(day_pieces);
+        if(result<0)         System.out.println("Error when updating statistics");
+
+  
+        System.out.println(variable);
+        System.out.println(i);
+        System.out.println();
+        }
+        return finished;
+    }
     
+
 }

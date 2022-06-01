@@ -1,11 +1,13 @@
 package MES;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import java.util.*;
-
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 class MyThread extends Thread{
 	public void statistics() {
@@ -23,10 +25,28 @@ class MyThread extends Thread{
 	}
 }
 
+
+class UI extends JFrame{
+	
+	JLabel daily_pieces =new JLabel("AA");
+	
+	public UI(){
+		setTitle("User Interface for Daily Information");
+		setSize(400,400);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		daily_pieces.setBounds(10, 10, 150, 50);
+		daily_pieces.setVisible(true);	
+		this.add(daily_pieces);
+	}
+}
+
+
 public class sorter {
-    public static ArrayList<piece> day_pieces;
+    public static ArrayList<Piece> day_pieces;
     public static warehouse w1;
-    public static ArrayList<machine> machines;
+    public static ArrayList<Machine> machines;
     public static short[] dock={0,0,0,0,0,0,0,0,0};
     
 	public static void main(String[] args) {
@@ -34,7 +54,8 @@ public class sorter {
 		
 		MyThread data_analisys=new MyThread();
 		
-		
+		UI info=new UI();
+			
 //		while (1) {
 //			read_vars();
 //			
@@ -49,13 +70,13 @@ public class sorter {
 //			}
 //	 		
 //		}
-		day_pieces=database.getpieces();
+//		day_pieces=Database.getpieces();
 //		print_daypieces(day_pieces);
 //		System.out.println();
 //		System.out.println();
-		day_pieces=decide_mach( day_pieces);
+//		day_pieces=decide_mach( day_pieces);
 		
-		print_daypieces(day_pieces);
+//		print_daypieces(day_pieces);
 		
 //		try {
 //			//App.send_pieces(day_pieces);
@@ -72,7 +93,7 @@ public class sorter {
 //		data_analisys.start();
 	}
 		
-private static void print_daypieces(ArrayList<piece> day_pieces2) {
+private static void print_daypieces(ArrayList<Piece> day_pieces2) {
 	int i,j;
 	for(j=0;j<day_pieces.size();j++) {
 		System.out.print("day piece "+j+":   order_id:"+day_pieces.get(j).orderid+"   priority:"
@@ -85,22 +106,23 @@ private static void print_daypieces(ArrayList<piece> day_pieces2) {
 }
 
 
-private static ArrayList<piece> decide_mach(ArrayList<piece> day_pieces) {
+private static ArrayList<Piece> decide_mach(ArrayList<Piece> day_pieces) {
 	short i=0;
 	short[] dock= {0,0,0};
 	short[] a={0,0,0,0,0,0};
 	
-//	for(int j=0;j<day_pieces.size();j++) {
-//		for(i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
-//	}
-
+	for(int j=0;j<day_pieces.size();j++) {
+		for(i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
+	}
+	
 	for(int j=0;j<day_pieces.size();j++) {
 		
 		if(day_pieces.get(j).priority==0) {day_pieces.get(j).machines=a ;} 
 		else if(day_pieces.get(j).priority!=0){
+			
 					
 			day_pieces.get(j).machines[1]=day_pieces.get(j).pieceid;	
-		
+			day_pieces.get(j).start=Instant.now();
 			if(day_pieces.get(j).final_form==3) {
 				day_pieces.get(j).machines[2]=2;	
 			}
@@ -115,7 +137,8 @@ private static ArrayList<piece> decide_mach(ArrayList<piece> day_pieces) {
 			
 			if(day_pieces.get(j).final_form==6) {
 				if(w1.p2>0) {
-					day_pieces.get(j).machines[2]=1;	
+					day_pieces.get(j).machines[2]=1;
+					day_pieces.get(j).curr_form=2;
 				}
 				else {
 					day_pieces.get(j).machines[2]=2;

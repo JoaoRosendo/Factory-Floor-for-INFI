@@ -17,7 +17,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
 
-public class machine {
+public class Machine {
     static int id;
     static short tool=0;
     static double op_time=0;
@@ -29,7 +29,7 @@ public class machine {
 	}
 
 	public static void setPieces_total(short pieces_total) {
-		machine.pieces_total = pieces_total;
+		Machine.pieces_total = pieces_total;
 	}
 	
 	public int getId() {
