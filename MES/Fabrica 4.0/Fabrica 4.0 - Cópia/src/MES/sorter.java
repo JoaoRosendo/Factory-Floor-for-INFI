@@ -15,6 +15,7 @@ class MyThread extends Thread{
 		while(true) {
 			
 			
+			
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
@@ -28,17 +29,64 @@ class MyThread extends Thread{
 
 class UI extends JFrame{
 	
-	JLabel daily_pieces =new JLabel("AA");
-	
-	public UI(){
+	JLabel daily_pieces1 =new JLabel();JLabel daily_pieces2 =new JLabel();JLabel daily_pieces3 =new JLabel();
+	JLabel daily_pieces4 =new JLabel();	JLabel daily_pieces5 =new JLabel();	JLabel daily_pieces6 =new JLabel();
+	JLabel daily_pieces7 =new JLabel();	JLabel daily_pieces8 =new JLabel();	JLabel daily_pieces9 =new JLabel();
+	JLabel daily_pieces10 =new JLabel();JLabel daily_pieces11 =new JLabel();JLabel daily_pieces12 =new JLabel();
+	public UI(){ 
 		setTitle("User Interface for Daily Information");
 		setSize(400,400);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		daily_pieces.setBounds(10, 10, 150, 50);
-		daily_pieces.setVisible(true);	
-		this.add(daily_pieces);
+		daily_pieces1.setBounds(10, 10, 150, 20);
+		daily_pieces1.setVisible(true);	
+		this.add(daily_pieces1);
+		
+		daily_pieces2.setBounds(30, 10, 150,20);
+		daily_pieces2.setVisible(true);	
+		this.add(daily_pieces2);
+		
+		daily_pieces3.setBounds(50, 10, 150,20);
+		daily_pieces3.setVisible(true);	
+		this.add(daily_pieces3);
+		
+		daily_pieces4.setBounds(70, 10, 150,20);
+		daily_pieces4.setVisible(true);	
+		this.add(daily_pieces4);
+		
+		daily_pieces5.setBounds(90, 10, 150,20);
+		daily_pieces5.setVisible(true);	
+		this.add(daily_pieces5);
+
+		daily_pieces6.setBounds(110, 10, 150,20);
+		daily_pieces6.setVisible(true);	
+		this.add(daily_pieces6);
+		
+		daily_pieces7.setBounds(130, 10, 150,20);
+		daily_pieces7.setVisible(true);	
+		this.add(daily_pieces7);
+
+		daily_pieces8.setBounds(150, 10, 150,20);
+		daily_pieces8.setVisible(true);	
+		this.add(daily_pieces8);
+
+		daily_pieces9.setBounds(170, 10, 150,20);
+		daily_pieces9.setVisible(true);	
+		this.add(daily_pieces9);
+
+		daily_pieces10.setBounds(190, 10, 150,20);
+		daily_pieces10.setVisible(true);	
+		this.add(daily_pieces10);
+
+		daily_pieces11.setBounds(210, 10, 150,20);
+		daily_pieces11.setVisible(true);	
+		this.add(daily_pieces11);
+
+		daily_pieces12.setBounds(230, 10, 150,20);
+		daily_pieces12.setVisible(true);	
+		this.add(daily_pieces12);
+		
 	}
 }
 
