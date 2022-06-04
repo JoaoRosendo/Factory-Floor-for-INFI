@@ -28,18 +28,19 @@ public class Database {
 			while(rs.next()) {
 				short i=0;
 				short[] buff = {0,0,0,0,0,0};
-				for(i=0;i<rs.getInt("nr_pieces");i++) {
-					if(i==12) return pieces;
-					newEntry = new Piece((short)rs.getInt("order_id"),i, buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)1
+				for(i=1;i<=rs.getInt("nr_pieces");i++) {
+					
+					newEntry = new Piece((short)rs.getInt("client_id"),(short)rs.getInt("order_id"),i, buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)1
 							, (short)0, Instant.now(), (double)0 	);
 					pieces.add(newEntry);
-					
+					if(i==12) return pieces;
 				}
-				if (i<12) {
-					while(i<12) {
-						if(i==12) return pieces;
-						newEntry = new Piece((short)0,(short)0, buff, (short)0, (short)0, (short)0, (short)0, Instant.now(),(double)0);
+				if (i<=12) {
+					while(i<=12) {
+						
+						newEntry = new Piece((short)0,(short)0,(short)0, buff, (short)0, (short)0, (short)0, (short)0, Instant.now(),(double)0);
 						pieces.add(newEntry);
+						if(i==12) return pieces;
 						i++;
 					}
 				}

@@ -4,6 +4,7 @@ import java.time.Instant;
 
 public class Piece {
     
+	short clientid;
 	short orderid;
 	short pieceid;
 	short[] machines; // tem em cada posição a próxima máquinas que vai utilizar
@@ -13,12 +14,11 @@ public class Piece {
 	short finished=0; //1 if finished
 	Instant start;
 	double cost;
-	
-	
-	
-	public Piece(short orderid, short pieceid, short[] machines, short priority, short final_form, short curr_form,
-			short finished, Instant start, double cost) {
+
+	public Piece(short clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
+			short curr_form, short finished, Instant start, double cost) {
 		super();
+		this.clientid = clientid;
 		this.orderid = orderid;
 		this.pieceid = pieceid;
 		this.machines = machines;
@@ -27,7 +27,19 @@ public class Piece {
 		this.curr_form = curr_form;
 		this.finished = finished;
 		this.start = start;
+		this.cost = cost;
+	}
 
+	public short getClientid() {
+		return clientid;
+	}
+
+	public void setClientid(short clientid) {
+		this.clientid = clientid;
+	}
+
+	public double getCost() {
+		return cost;
 	}
 
 	public void setCost(double cost) {
