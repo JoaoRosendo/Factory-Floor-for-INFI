@@ -367,5 +367,5 @@ private static ArrayList<Piece> decide_mach(ArrayList<Piece> day_pieces) {
 	
 	return day_pieces;
 	
-}
+	}
 }
