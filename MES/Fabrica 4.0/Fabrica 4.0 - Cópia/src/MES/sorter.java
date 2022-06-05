@@ -10,11 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 class MyThread extends Thread{
-	public void statistics() {
+	public void statistics() throws UaException, InterruptedException, ExecutionException {
 		UI info=new UI();
 		
 		while(true) {
-			
+			sorter.day_pieces=App.check_pieces(sorter.day_pieces);			
 			//update_stats();
 			update_gui(info);
 			
@@ -162,7 +162,7 @@ class UI extends JFrame{
 	JLabel daily_pieces10 =new JLabel();JLabel daily_pieces11 =new JLabel();
 	public UI(){ 
 		setTitle("User Interface for Daily Information");
-		setSize(1280,720);
+		setSize(600,600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		//setLayout(null);
 		setVisible(true);
@@ -221,34 +221,40 @@ public class sorter {
     public static warehouse w1;
     public static ArrayList<Machine> machines;
     public static ArrayList<Piece> day_pieces;
+    public static int warning_start_day=0;
+    public static int nr_pieces=0;
+    public static int nr_finished=0;
     
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
 	
-			
-		while (1) {
-			read_vars();
-			
-			if(warning_start_day==1) {
-				day_pieces=database.getpieces();
-				decide_mach(null, day_pieces);
-				update_results();
-			}
-			
-			if(warning_mid_day==1) {
-				decide_tools(null, day_pieces);
-			}
-	 		
-		}
+//		MyThread data_analisys=new MyThread();
+//		data_analisys.statistics();
+//		
+//		while (true) {
+//			warning_start_day=App.check_ToD();
+//			
+//			if(warning_start_day==1) {
+//				nr_pieces=0;
+//				Database.update_stats_EoD(day_pieces);
+//				day_pieces=Database.getpieces();
+//				for(int j=0;j<day_pieces.size();j++) {
+//		        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+//		        }
+//				day_pieces=decide_mach( day_pieces);
+//				
+//				warning_start_day=0;
+//			}
+//			
+//			for(int j=0;j<day_pieces.size();j++) {
+//	        	if(day_pieces.get(j).finished==1) nr_finished++;
+//	        }
+//			nr_finished=0;
+//		}
+		
 		day_pieces=Database.getpieces();
 		print_daypieces(day_pieces);
-//		System.out.println();
-//		System.out.println();
 		day_pieces=decide_mach( day_pieces);
 		
-		MyThread data_analisys=new MyThread();
-		data_analisys.statistics();
-		
-//		print_daypieces(day_pieces);
 		
 //		try {
 //			//App.send_pieces(day_pieces);
@@ -299,15 +305,15 @@ private static ArrayList<Piece> decide_mach(ArrayList<Piece> day_pieces) {
 				day_pieces.get(j).machines[2]=2;	
 			}
 			
-			if(day_pieces.get(j).final_form==4) {
+			else if(day_pieces.get(j).final_form==4) {
 				day_pieces.get(j).machines[2]=3;	
 			}
 			
-			if(day_pieces.get(j).final_form==5) {
+			else if(day_pieces.get(j).final_form==5) {
 				day_pieces.get(j).machines[2]=4;	
 			}
 			
-			if(day_pieces.get(j).final_form==6) {
+			else if(day_pieces.get(j).final_form==6) {
 				if(w1.p2>0) {
 					day_pieces.get(j).machines[2]=1;
 					day_pieces.get(j).curr_form=2;
@@ -319,17 +325,17 @@ private static ArrayList<Piece> decide_mach(ArrayList<Piece> day_pieces) {
 				}
 			}
 			
-			if(day_pieces.get(j).final_form==7) {
+			else if(day_pieces.get(j).final_form==7) {
 				day_pieces.get(j).machines[2]=3;
 				day_pieces.get(j).machines[3]=4;	
 			}
 			
-			if(day_pieces.get(j).final_form==8) {
+			else if(day_pieces.get(j).final_form==8) {
 				day_pieces.get(j).machines[2]=1;
 				day_pieces.get(j).machines[3]=3;	
 			}
 			
-			if(day_pieces.get(j).final_form==9) {
+			else if(day_pieces.get(j).final_form==9) {
 				day_pieces.get(j).machines[2]=3;	
 				day_pieces.get(j).machines[3]=4;	
 				day_pieces.get(j).machines[4]=3;	
@@ -341,18 +347,18 @@ private static ArrayList<Piece> decide_mach(ArrayList<Piece> day_pieces) {
 				else if(dock[1]==4 && dock[2]<4) {day_pieces.get(j).machines[5]=3; dock[2]++;}
 		
 			}
-			if(day_pieces.get(j).orderid!=day_pieces.get(0).orderid && day_pieces.get(j).orderid!=0) {
+			else if(day_pieces.get(j).orderid!=day_pieces.get(0).orderid && day_pieces.get(j).orderid!=0) {
 				if(dock[0]<5) {day_pieces.get(j).machines[5]=1; dock[0]++;}
 				else if(dock[0]>5 ) {day_pieces.get(j).machines[5]=2; dock[1]++;}
 			}
 		}
 		
-	for(int i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);
-		System.out.println();
+		for(int i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);
+			System.out.println();
 	}
 	
 	for(int j=0;j<day_pieces.size();j++) {
-		System.out.print("day piece "+j+":   order_id:"+day_pieces.get(j).orderid+"   priority:"
+		System.out.print("day piece "+(j+1)+":   order_id:"+day_pieces.get(j).orderid+"   priority:"
 				+day_pieces.get(j).priority+"   final_form:"+day_pieces.get(j).final_form
 				+"   curr_form:"+day_pieces.get(j).curr_form+ "   machines:");
 		for(int i=0;i<day_pieces.get(j).machines.length;i++)	System.out.print(day_pieces.get(j).machines[i]);		

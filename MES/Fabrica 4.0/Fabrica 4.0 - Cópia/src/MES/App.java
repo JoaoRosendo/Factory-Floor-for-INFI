@@ -59,6 +59,7 @@ public class App {
 	
 	static String tools_time_ant=null;
 	static String pieces_time_ant=null;
+	
     public static int send_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns the nr of pieces not correctly sent
     	//TRY CATCH ROUTINE NEEDED
@@ -72,7 +73,7 @@ public class App {
     	int errors=0;
         
         for (int i=0;i<12;i++) {
-        	//Always searcehs all pieces, even the ones with 000000
+        	//Always searches all pieces, even the ones with 000000
         NodeId nodeId = new NodeId(4,array_ids[i]);
         //reads the array
         String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
@@ -119,11 +120,6 @@ public class App {
     	int result=0;
     	
         client.connect().get();
-        NodeId nodeId_midday = new NodeId(4,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        String tools_time = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);
-        if(tools_time=="1"&& tools_time_ant=="0") {
-        	
-        }
 		
         NodeId nodeId_startday = new NodeId(4,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         String pieces_time = client.readValue(0, TimestampsToReturn.Both, nodeId_startday).toString().substring(29, 31);;
@@ -131,7 +127,6 @@ public class App {
         	
         }
         
-        tools_time_ant=tools_time;
         pieces_time_ant=pieces_time;
        return 0;
 		
@@ -186,32 +181,45 @@ public class App {
 		return docks;
 	}
     
-    public static int check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
+    public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
    
     	client.connect().get();
     	int finished=0;
-        
+    	int nr_pieces=0;
+        for(int j=0;j<day_pieces.size();j++) {
+        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+        }
         for (int i=0;i<12;i++) {
         	//checks all pieces to see if they're finished
         NodeId nodeId = new NodeId(4,array_ids[i]);
         //reads the array
-        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");//!!!!!!!!!!CUT RIGHT WAY
+        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
       
-        if((""+variable.charAt(1))=="1") {
+        if((""+variable.charAt(1))==Short.toString(day_pieces.get(i).final_form)) {
         	finished++;
         	day_pieces.get(i).finished=1;
+        	day_pieces.get(i).machines[1]=Short.valueOf(""+variable.charAt(1));
+        	
+        }
+        else {
+        	day_pieces.get(i).machines[1]=Short.valueOf(""+variable.charAt(1));
         }
         
-        int result=Database.update_stats_EoD(day_pieces);
-        if(result<0)         System.out.println("Error when updating statistics");
+        
+        
+        if(finished==nr_pieces) {
+        	int result=Database.update_stats_EoD(day_pieces);
+        	if(result<0)         System.out.println("Error when updating statistics");
+        }
+        
 
   
         System.out.println(variable);
         System.out.println(i);
         System.out.println();
         }
-        return finished;
+        return day_pieces;
     }
     
 

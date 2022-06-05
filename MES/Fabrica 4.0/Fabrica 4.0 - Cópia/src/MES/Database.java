@@ -80,9 +80,37 @@ public class Database {
 			System.out.println("database.update_stats: "+e.getMessage());
 		}
 		
+		try {
+			Connection con = DriverManager.getConnection(url, user, password);
+			String query="DELETE FROM day_pieces";
+						
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.addBatch();        	
+        	ps.executeBatch();
+				
+	        con.close();
+		}
+		catch(SQLException e) {
+			System.out.println("database.update_stats: "+e.getMessage());
+		}
+		
+		try {
+			Connection con = DriverManager.getConnection(url, user, password);
+			String query="INSERT INTO \"up201806577\".\"day_pieces\" (SELECT * FROM \"up201806577\".\"day_pieces_intermed\");";
+						
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.addBatch();        	
+        	ps.executeBatch();
+				
+	        con.close();
+		}
+		catch(SQLException e) {
+			System.out.println("database.update_stats: "+e.getMessage());
+		}
+		
 		return count;
 		
 	}
-	
+
 	
 }
