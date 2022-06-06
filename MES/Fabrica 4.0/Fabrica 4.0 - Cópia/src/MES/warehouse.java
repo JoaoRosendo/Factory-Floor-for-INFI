@@ -1,6 +1,14 @@
 package MES;
 
 public class warehouse {
-    public static int p1=10;
-	public static int p2=10;
+    public int p1;
+	public int p2;
+	public warehouse(int p1, int p2) {
+		super();
+		this.p1 = p1;
+		this.p2 = p2;
+	}
+	
+	
+	
 }

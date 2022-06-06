@@ -18,17 +18,7 @@ public class App {
 	
 	static String[] array_ids=new String[] {
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C1",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C2",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C3",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C4",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C6",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C7",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C8",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C9",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C10",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C11",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C12"};
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C2"};
 	
 	static String[] maq_ids= {
 			"",
@@ -63,52 +53,50 @@ public class App {
     public static int send_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns the nr of pieces not correctly sent
     	//TRY CATCH ROUTINE NEEDED
-    	
-    	for(int j=0;j<day_pieces.size();j++) {
-    		for(int i=0;i<day_pieces.get(j).machines.length;i++) day_pieces.get(j).machines[i]=0;		
-    	}
-    	
+    	String variable;
     	client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
         client.connect().get();
     	int errors=0;
-        
-        for (int i=0;i<12;i++) {
-        	//Always searches all pieces, even the ones with 000000
-        NodeId nodeId = new NodeId(4,array_ids[i]);
-        //reads the array
-        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
-        
-        //Creates a array of shorts and inserts there the values to send adn transforms them to string to be able to compare
-        short[] machines= day_pieces.get(i).machines;
-        String machines_s="";
-        for(int j=0;i<day_pieces.get(i).machines.length;i++) {machines_s.concat(String.valueOf(day_pieces.get(i).machines[j]));}
-        System.out.println("machines_s"+":");
-        System.out.print(machines_s);
+        int ready=1;
+        NodeId nodeId;
+        //for (int i=0;i<12;i++) {
+	        
+        	while(ready!=1) {
+        		nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
+        		variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
+        		if(variable=="false") {
+        			ready=1;
+        		}
+        	}
 
-        //Sending Values
-        Variant v = new Variant( machines);
-        DataValue dv = new DataValue(v, null, null);
-        variable = client.writeValue(nodeId, dv).get().toString();        
-        
-        
-        //Check if the sent array and the one we have here are equal
-        variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(31, 44).replace(", ", "");
-        
-        if(variable!=machines_s) {
-        	errors++;
-        }
-        
-        System.out.println(variable);
-        System.out.println(i);
-        System.out.println();
-      
-        
-//        NodeId nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C1");
-//
-//        String Variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString();
-//
-//        System.out.println(Variable);
-    	}
+        	nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
+        	
+
+        	//Creates a array of shorts and inserts there the values to send adntransforms them to string to be able to compare 
+        	short[] machines=day_pieces.get(1).getMachines(); 
+        	short[] data= {0,0,0,0,0,0};
+        	String machines_s=""; 
+        	for(int j=0;j<6;j++){
+        		data[j]=machines[j];
+        		machines_s.concat(String.valueOf(day_pieces.get(1).machines[j]));
+        		System.out.print(""+machines[j]);
+        	}
+        	
+        	System.out.println();
+        	//Sending Values Variant 
+        	Variant v = new Variant(data); DataValue dv = new DataValue(v, null, null); 
+        	variable = client.writeValue(nodeId,dv).get().toString().substring(31, 50).replace(", ", "");
+        	System.out.println(variable);
+
+        	//Check if the sent array and the one we have here are equal variable =
+        	variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
+        	System.out.println(variable);
+        	if(variable!=machines_s) { errors++; }
+        	
+
+        	System.out.println(variable); System.out.println();
+        	
+        //}
         System.out.println(errors);
 
         return errors;

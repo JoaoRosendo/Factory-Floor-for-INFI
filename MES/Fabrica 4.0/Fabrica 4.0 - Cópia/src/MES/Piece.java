@@ -4,16 +4,16 @@ import java.time.Instant;
 
 public class Piece {
     
-	short clientid;
-	short orderid;
-	short pieceid;
-	short[] machines; // tem em cada posição a próxima máquinas que vai utilizar
-	short priority;
-	short final_form;
-	short curr_form=1;
-	short finished=0; //1 if finished
-	Instant start;
-	double cost;
+	public short clientid;
+	 public short orderid;
+	 public short pieceid;
+	 public short[] machines = {0,0,0,0,0,0,0,0,0}; // tem em cada posição a próxima máquinas que vai utilizar
+	 public short priority;
+	 public short final_form;
+	 public short curr_form=1;
+	 public short finished=0; //1 if finished
+	 public Instant start;
+	public double cost;
 
 	public Piece(short clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
 			short curr_form, short finished, Instant start, double cost) {
