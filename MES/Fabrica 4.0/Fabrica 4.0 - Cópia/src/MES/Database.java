@@ -57,57 +57,91 @@ public class Database {
 		return pieces;
 	}
 
-	public static int update_stats_EoD(ArrayList<Piece> day_pieces) {
-		long time=0;
+	public static int update_stats_EoRequests(ArrayList<Piece> day_pieces) {
+		long[] time={0,0};
+		int instance_dif_id=0;
 		Instant now=Instant.now();
 		try {
 
 			Connection con = DriverManager.getConnection(url, user, password);
-				for(int i=0;i>day_pieces.size();i++) {
-						time=time+Duration.between(day_pieces.get(i).start, now).toMillis();
-				}	
-					time=(time/1000)/12;
-					PreparedStatement ps = con.prepareStatement("INSERT INTO day_stats (avg_time_piece) VALUES (?)");
-							            
-		            ps.setInt(1, (int)time );
-		        	
-		        	ps.addBatch();        	
-		        	ps.executeBatch();
+
+			for(int i=0;i>day_pieces.size();i++) {
+				if(day_pieces.get(i).getClientid()==day_pieces.get(0).getClientid()&&day_pieces.get(i).getOrderid()==day_pieces.get(0).getOrderid()) {
+					time[1]=time[1]+Duration.between(day_pieces.get(i).start, now).toMillis();
+				}
+				else {
+					time[2]=time[2]+Duration.between(day_pieces.get(i).start, now).toMillis();
+					instance_dif_id=i;
+				}
 				
-	        con.close();
+			}	
+			time[1]=(time[1]/1000)/12;
+			time[2]=(time[2]/1000)/12;
+			if(time[2]!=0) {
+				PreparedStatement ps = con.prepareStatement("INSERT INTO day_stats (avg_time_piece,orderid,clientid) VALUES (?,?,?)");
+
+				ps.setInt(1, (int)time[1] );
+				ps.setInt(2, (int)day_pieces.get(0).getClientid() );
+				ps.setInt(3, (int)day_pieces.get(0).getClientid() );
+				ps.addBatch();        	
+				ps.executeBatch();
+				
+				ps = con.prepareStatement("INSERT INTO day_stats (avg_time_piece,orderid,clientid) VALUES (?,?,?)");
+
+				ps.setInt(1, (int)time[2] );
+				ps.setInt(2, (int)day_pieces.get(instance_dif_id).getClientid() );
+				ps.setInt(3, (int)day_pieces.get(instance_dif_id).getClientid() );
+				ps.addBatch();        	
+				ps.executeBatch();
+				con.close();
+			}
+			else {
+				PreparedStatement ps = con.prepareStatement("INSERT INTO day_stats (avg_time_piece,orderid,clientid) VALUES (?,?,?)");
+
+				ps.setInt(1, (int)time[1] );
+				ps.setInt(2, (int)day_pieces.get(0).getClientid() );
+				ps.setInt(3, (int)day_pieces.get(0).getClientid() );
+				ps.addBatch();        	
+				ps.executeBatch();
+
+				con.close();
+			}
+			
+			
+			
 		}
 		catch(SQLException e) {
 			System.out.println("database.update_stats: "+e.getMessage());
 		}
-		
+
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 			String query="DELETE FROM day_pieces";
-						
+
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.addBatch();        	
-        	ps.executeBatch();
-				
-	        con.close();
+			ps.executeBatch();
+
+			con.close();
 		}
 		catch(SQLException e) {
 			System.out.println("database.update_stats: "+e.getMessage());
 		}
-		
+
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 			String query="INSERT INTO \"up201806577\".\"day_pieces\" (SELECT * FROM \"up201806577\".\"day_pieces_intermed\");";
-						
+
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.addBatch();        	
-        	ps.executeBatch();
-				
-	        con.close();
+			ps.executeBatch();
+
+			con.close();
 		}
 		catch(SQLException e) {
 			System.out.println("database.update_stats: "+e.getMessage());
 		}
-		
+
 		return count;
 		
 	}

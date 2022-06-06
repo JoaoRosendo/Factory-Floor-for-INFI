@@ -229,7 +229,8 @@ public class sorter {
 //		
 //		while (true) {
 //			warning_start_day=App.check_ToD();
-//			
+//			nr_finished=0;
+//			nr_pieces=0;
 		// for(int j=0;j<day_pieces.size();j++) {
 		// if(day_pieces.get(j).final_form!=0) nr_pieces++;
 		// }
@@ -239,7 +240,7 @@ public class sorter {
 
 		// if(warning_start_day==1 && nr_finished==nr_pieces) {
 		// nr_pieces=0;
-		// Database.update_stats_EoD(day_pieces);
+		// Database.update_stats_EoRequests(day_pieces);
 		// day_pieces=Database.getpieces();
 		//
 		// day_pieces=decide_mach( day_pieces);
