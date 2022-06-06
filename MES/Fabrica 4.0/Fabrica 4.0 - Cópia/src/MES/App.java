@@ -63,7 +63,11 @@ public class App {
 		int errors=0;
 		int ready=1;
 		NodeId nodeId;
-		for (int i=0;i<12;i++) {
+		int nr_pieces=0;
+		for(int j=0;j<day_pieces.size();j++) {
+        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+        }
+		for (int i=0;i<nr_pieces;i++) {
 			System.out.println("ready:"+ready);
 
 			while(ready!=0) {
@@ -101,11 +105,11 @@ public class App {
 				errors++;
 				System.out.println("error at"+i);
 			}
-
+			
 			while(variable!="000000") {
 				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
 				System.out.println("while:"+variable);
-				Thread.sleep(500);
+				Thread.sleep(100);
 			}
 		}
 		System.out.println(errors);

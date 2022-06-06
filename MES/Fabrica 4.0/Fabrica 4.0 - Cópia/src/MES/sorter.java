@@ -279,7 +279,7 @@ public class sorter {
 			
 		}
 		print_daypieces(day_pieces);
-		App.send_pieces(day_pieces);
+		//App.send_pieces(day_pieces);
 
 //		try {
 //			//App.send_pieces(day_pieces);
