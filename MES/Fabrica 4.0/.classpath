@@ -6,12 +6,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Ana Sofia/Downloads/INFI-main/INFI-main/MES/MES/postgresql-42.3.1.jar">
+	<classpathentry kind="lib" path="C:/Users/Vasco/Documents/GitHub/INFI/MES/Fabrica 4.0/postgresql-42.3.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Ana Sofia/Downloads/INFI-main/INFI-main/MES/MES/swt.jar">
+	<classpathentry kind="lib" path="C:/Users/Vasco/Documents/GitHub/INFI/MES/Fabrica 4.0/swt.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

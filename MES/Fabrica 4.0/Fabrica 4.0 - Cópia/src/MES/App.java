@@ -50,57 +50,68 @@ public class App {
 	static String tools_time_ant=null;
 	static String pieces_time_ant=null;
 	
-    public static int send_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
-    	//returns the nr of pieces not correctly sent
-    	//TRY CATCH ROUTINE NEEDED
-    	String variable;
-    	client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
+	public static void start() throws InterruptedException, ExecutionException, UaException {
+		client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
         client.connect().get();
-    	int errors=0;
-        int ready=1;
-        NodeId nodeId;
-        //for (int i=0;i<12;i++) {
-	        
-        	while(ready!=1) {
-        		nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
-        		variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-        		if(variable=="false") {
-        			ready=1;
-        		}
-        	}
+	}
+	
+	public static int send_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
+		//returns the nr of pieces not correctly sent
+		//TRY CATCH ROUTINE NEEDED
+		String variable;
 
-        	nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
-        	
+		int errors=0;
+		int ready=1;
+		NodeId nodeId;
+		for (int i=0;i<12;i++) {
+			System.out.println("ready:"+ready);
 
-        	//Creates a array of shorts and inserts there the values to send adntransforms them to string to be able to compare 
-        	short[] machines=day_pieces.get(1).getMachines(); 
-        	short[] data= {0,0,0,0,0,0};
-        	String machines_s=""; 
-        	for(int j=0;j<6;j++){
-        		data[j]=machines[j];
-        		machines_s.concat(String.valueOf(day_pieces.get(1).machines[j]));
-        		System.out.print(""+machines[j]);
-        	}
-        	
-        	System.out.println();
-        	//Sending Values Variant 
-        	Variant v = new Variant(data); DataValue dv = new DataValue(v, null, null); 
-        	variable = client.writeValue(nodeId,dv).get().toString().substring(31, 50).replace(", ", "");
-        	System.out.println(variable);
+			while(ready!=0) {
+				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
+				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
+				System.out.println("C5 empty  "+variable);
+				if(variable.equals("false")) {
+					ready=0;
+				}
+			}
+			System.out.println("ready:"+ready);
+			nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
 
-        	//Check if the sent array and the one we have here are equal variable =
-        	variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
-        	System.out.println(variable);
-        	if(variable!=machines_s) { errors++; }
-        	
 
-        	System.out.println(variable); System.out.println();
-        	
-        //}
-        System.out.println(errors);
+			//Creates a array of shorts and inserts there the values to send and transforms them to string to be able to compare 
+			short[] machines=day_pieces.get(i).getMachines(); 
+			short[] data= {0,0,0,0,0,0};
+			String machines_s=""; 
+			for(int j=0;j<6;j++){
+				data[j]=machines[j];
+				machines_s.concat(String.valueOf(day_pieces.get(1).machines[j]));
+				System.out.print(""+machines[j]);
+			}
 
-        return errors;
-    }
+			System.out.println();
+			//Sending Values Variant 
+			Variant v = new Variant(data); DataValue dv = new DataValue(v, null, null); 
+			variable = client.writeValue(nodeId,dv).get().toString();
+			//System.out.println(variable);
+
+			//Check if the sent array and the one we have here are equal variable =
+			variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 47).replace(", ", "");
+			System.out.println("opcua: "+variable);
+			if(variable.equals(machines_s)==true) { 
+				errors++;
+				System.out.println("error at"+i);
+			}
+
+			while(variable!="000000") {
+				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
+				System.out.println("while:"+variable);
+				Thread.sleep(500);
+			}
+		}
+		System.out.println(errors);
+
+		return errors;
+	}
     
     /////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
     public static int check_ToD() throws UaException, InterruptedException, ExecutionException {
@@ -171,41 +182,22 @@ public class App {
     
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
-   
-    	client.connect().get();
-    	int finished=0;
-    	int nr_pieces=0;
-        for(int j=0;j<day_pieces.size();j++) {
-        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
-        }
+
         for (int i=0;i<12;i++) {
         	//checks all pieces to see if they're finished
-        NodeId nodeId = new NodeId(4,array_ids[i]);
-        //reads the array
-        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
-      
-        if((""+variable.charAt(1))==Short.toString(day_pieces.get(i).final_form)) {
-        	finished++;
-        	day_pieces.get(i).finished=1;
-        	day_pieces.get(i).machines[1]=Short.valueOf(""+variable.charAt(1));
-        	
-        }
-        else {
-        	day_pieces.get(i).machines[1]=Short.valueOf(""+variable.charAt(1));
-        }
-        
-        
-        
-        if(finished==nr_pieces) {
-        	int result=Database.update_stats_EoD(day_pieces);
-        	if(result<0)         System.out.println("Error when updating statistics");
-        }
-        
+	        NodeId nodeId = new NodeId(4,array_ids[i]);
+	        //reads the array
+	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
+	        
+	        for(int j=0;j<12;j++) {
+	        	if(""+variable.charAt(0)==String.valueOf(day_pieces.get(j).getPieceid())) {
+	        		day_pieces.get(j).setCurr_form(Short.valueOf(""+variable.charAt(1)));
+	        	}
+	        }
+	              
 
-  
-        System.out.println(variable);
-        System.out.println(i);
-        System.out.println();
+	        System.out.println(variable);
+	        System.out.println(i);
         }
         return day_pieces;
     }

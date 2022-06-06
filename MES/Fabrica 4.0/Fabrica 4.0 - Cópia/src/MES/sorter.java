@@ -14,6 +14,7 @@ class MyThread extends Thread{
 		UI info=new UI();
 		
 		while(true) {
+			
 			sorter.day_pieces=App.check_pieces(sorter.day_pieces);			
 			//update_stats();
 			update_gui(info);
@@ -216,7 +217,11 @@ class UI extends JFrame{
 }
 
 public class sorter {
-
+	static volatile ArrayList<Piece> day_pieces;
+	static volatile warehouse w1 = new warehouse(10, 10);
+	static volatile ArrayList<Machine> machines;
+	
+	
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
 
 //		MyThread data_analisys=new MyThread();
@@ -228,9 +233,9 @@ public class sorter {
 		// for(int j=0;j<day_pieces.size();j++) {
 		// if(day_pieces.get(j).final_form!=0) nr_pieces++;
 		// }
-		// for(int j=0;j<day_pieces.size();j++) {
-		// if(day_pieces.get(j).finished==1) nr_finished++;
-		// }
+//		 for(int j=0;j<day_pieces.size();j++) {
+//		 if(day_pieces.get(j).finished==1) nr_finished++;
+//		 }
 
 		// if(warning_start_day==1 && nr_finished==nr_pieces) {
 		// nr_pieces=0;
@@ -245,17 +250,21 @@ public class sorter {
 //			nr_finished=0;
 //			nr_pieces=0;
 //		}
-
-		ArrayList<Piece> day_pieces;
-		warehouse w1 = new warehouse(10, 10);
-		ArrayList<Machine> machines;
+		App.start();
 		short[] aux = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		short[] dock = { 0, 0, 0 };
 		int warning_start_day = 0;
 		int nr_pieces = 0;
 		int nr_finished = 0;
+		
 
 		day_pieces = Database.getpieces();
+		for(int j=0;j<day_pieces.size();j++) {
+        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+        }
+		 for(int j=0;j<day_pieces.size();j++) {
+			 if(day_pieces.get(j).finished==1) nr_finished++;
+		}
 		day_pieces.get(5).setFinal_form((short) 5);
 		print_daypieces(day_pieces);
 		System.out.println("///////////////////////////------////////////////////////////");
