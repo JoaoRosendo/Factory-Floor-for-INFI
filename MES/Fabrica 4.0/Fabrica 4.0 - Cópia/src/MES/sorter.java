@@ -266,7 +266,7 @@ public class sorter {
 		 for(int j=0;j<day_pieces.size();j++) {
 			 if(day_pieces.get(j).finished==1) nr_finished++;
 		}
-		day_pieces.get(5).setFinal_form((short) 5);
+		//day_pieces.get(5).setFinal_form((short) 5);
 		print_daypieces(day_pieces);
 		System.out.println("///////////////////////////------////////////////////////////");
 		for (int i = 0; i < 12; i++) {
