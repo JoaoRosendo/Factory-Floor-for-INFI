@@ -20,7 +20,7 @@ class MyThread extends Thread{
 			update_gui(info);
 			
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -279,7 +279,7 @@ public class sorter {
 			
 		}
 		print_daypieces(day_pieces);
-		//App.send_pieces(day_pieces);
+		App.send_pieces(day_pieces);
 
 //		try {
 //			//App.send_pieces(day_pieces);
