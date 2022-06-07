@@ -360,6 +360,7 @@ public class sorter {
 				aux[2] = 3;
 				aux[3] = 4;
 				aux[4] = 3;
+				aux[1] =2;
 			}
 
 			if (dock[0] < 4) {

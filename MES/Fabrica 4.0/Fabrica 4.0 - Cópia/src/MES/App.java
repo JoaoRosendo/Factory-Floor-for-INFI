@@ -72,19 +72,19 @@ public class App {
 		for(int j=0;j<day_pieces.size();j++) {
         	if(day_pieces.get(j).final_form!=0) nr_pieces++;
         }
-		for (int i=0;i<nr_pieces;i++) {
+		for (int i=0;i<6;i++) {
 			System.out.println("ready:"+ready);
 			ready=1;
 			while(ready!=0) {
 				nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
-				v2=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
+				v2=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
 				System.out.println("while:"+v2);
 				
 				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
 				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
 				System.out.println("C5 empty  "+variable);
-				if(variable.equals("false") && v1.equals("-1-1-1-1-1-1")) {
+				if(variable.equals("false") && v2.equals("-1-1-1-1-1-1")) {
 					ready=0;
 				}
 			}
@@ -116,24 +116,10 @@ public class App {
 				System.out.println("error at"+i);
 			}
 			
-			while(variable!="-1-1-1-1-1-1" || conv_5_act_d==1 ||conv_5_act_e==1) {
+			while(!variable.equals("-1-1-1-1-1-1")) {
 				//Check C5 array
-				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
+				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
 				System.out.println("Final while:"+variable);
-				
-				//Check c5 act right
-				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars_Actuators.");
-				v1 = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				if(v1.equals("false")) {
-					conv_5_act_d=0;
-				}
-				
-				//Check c5 act left
-				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars_Actuators.");
-				v1 = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				if(v1.equals("false")) {
-					conv_5_act_e=0;
-				}
 				
 				Thread.sleep(100);
 			}
