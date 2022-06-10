@@ -17,8 +17,27 @@ import lombok.ToString;
 public class App {
 	
 	static String[] array_ids=new String[] {
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C1",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C2"};
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C6",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C7",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C8",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C9",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C10",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C11",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C12",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C13",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C14",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C15",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C16",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C17",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C18",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C19",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C20",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C21",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C22",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C23",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C24",
+			};
 	
 	static String[] maq_ids= {
 			"",
@@ -68,12 +87,13 @@ public class App {
 		short conv_5_act_e=1;
 		String v1=null;
 		String v2=null;
-		
+		int pieces_count;
 		for(int j=0;j<day_pieces.size();j++) {
-        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+        	if(day_pieces.get(j).final_form!=0) nr_pieces++;      	
         }
-		for (int i=0;i<6;i++) {
-			System.out.println("ready:"+ready);
+		for (int i=0;i<nr_pieces;i++) {
+			while(workpieces_count()>=6){};
+			
 			ready=1;
 			while(ready!=0) {
 				nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
@@ -83,7 +103,7 @@ public class App {
 				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
 				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				System.out.println("C5 empty  "+variable);
+				System.out.println("C5 status:  "+variable);
 				if(variable.equals("false") && v2.equals("-1-1-1-1-1-1")) {
 					ready=0;
 				}
@@ -119,17 +139,31 @@ public class App {
 			while(!variable.equals("-1-1-1-1-1-1")) {
 				//Check C5 array
 				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
-				System.out.println("Final while:"+variable);
+				//System.out.println("Final while:"+variable);
 				
 				Thread.sleep(100);
 			}
+			System.out.println();
+			System.out.println();
 		}
 		System.out.println(errors);
 
 		return errors;
 	}
     
-    /////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
+    private static int workpieces_count() throws InterruptedException, ExecutionException {
+		int counter=0;
+		NodeId nodeId;
+		for (int i=0;i<20;i++) {
+			nodeId=new NodeId(4,array_ids[i]);
+			String variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
+			if(!variable.equals("-1-1-1-1-1-1")) counter++;
+		}
+		
+		return counter;
+	}
+
+	/////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
     public static int check_ToD() throws UaException, InterruptedException, ExecutionException {
     	//TRY CATCH ROUTINE NEEDED
     	int result=0;
@@ -199,7 +233,7 @@ public class App {
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
 
-        for (int i=0;i<12;i++) {
+        for (int i=0;i<24;i++) {
         	//checks all pieces to see if they're finished
 	        NodeId nodeId = new NodeId(4,array_ids[i]);
 	        //reads the array
@@ -208,8 +242,12 @@ public class App {
 	        for(int j=0;j<12;j++) {
 	        	if(""+variable.charAt(0)==String.valueOf(day_pieces.get(j).getPieceid())) {
 	        		day_pieces.get(j).setCurr_form(Short.valueOf(""+variable.charAt(1)));
+	        		if(day_pieces.get(j).getCurr_form()==day_pieces.get(j).getFinal_form()) {
+	        			day_pieces.get(j).setFinished((short)1);
+	        		}
 	        	}
 	        }
+	        
 	              
 
 	        System.out.println(variable);

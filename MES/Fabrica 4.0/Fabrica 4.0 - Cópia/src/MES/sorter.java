@@ -281,18 +281,6 @@ public class sorter {
 		print_daypieces(day_pieces);
 		App.send_pieces(day_pieces);
 
-//		try {
-//			//App.send_pieces(day_pieces);
-//		} catch (UaException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 //		data_analisys.start();
 	}
 
