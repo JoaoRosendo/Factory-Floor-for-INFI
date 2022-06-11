@@ -224,64 +224,52 @@ public class sorter {
 	
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
 
-//		MyThread data_analisys=new MyThread();
-//		data_analisys.statistics();
-//		
-//		while (true) {
-//			warning_start_day=App.check_ToD();
-//			nr_finished=0;
-//			nr_pieces=0;
-		// for(int j=0;j<day_pieces.size();j++) {
-		// if(day_pieces.get(j).final_form!=0) nr_pieces++;
-		// }
-//		 for(int j=0;j<day_pieces.size();j++) {
-//		 if(day_pieces.get(j).finished==1) nr_finished++;
-//		 }
-
-		// if(warning_start_day==1 && nr_finished==nr_pieces) {
-		// nr_pieces=0;
-		// Database.update_stats_EoRequests(day_pieces);
-		// day_pieces=Database.getpieces();
-		//
-		// day_pieces=decide_mach( day_pieces);
-		//
-		// warning_start_day=0;
-		// }
-//			
-//			nr_finished=0;
-//			nr_pieces=0;
-//		}
-		App.start();
 		short[] aux = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		short[] dock = { 0, 0, 0 };
 		int warning_start_day = 0;
 		int nr_pieces = 0;
 		int nr_finished = 0;
+		MyThread data_analisys=new MyThread();
+		data_analisys.statistics();
+		App.start();
 		
-
-		day_pieces = Database.getpieces();
-		for(int j=0;j<day_pieces.size();j++) {
-        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
-        }
-		 for(int j=0;j<day_pieces.size();j++) {
+		while (true) {
+			nr_finished=0;
+			nr_pieces=0;
+			for(int j=0;j<day_pieces.size();j++) {
+				if(day_pieces.get(j).final_form!=0) nr_pieces++;
+			}
+			 for(int j=0;j<day_pieces.size();j++) {
 			 if(day_pieces.get(j).finished==1) nr_finished++;
-		}
-		//day_pieces.get(5).setFinal_form((short) 5);
-		print_daypieces(day_pieces);
-		System.out.println("///////////////////////////------////////////////////////////");
-		for (int i = 0; i < 12; i++) {
-			 aux=(decide_mach(day_pieces.get(i), w1,dock));
-			 day_pieces.get(i).setMachines(aux);
-			 day_pieces.get(i).setCurr_form(aux[1]);
-			dock[0] = aux[6];
-			dock[1] = aux[7];
-			dock[2] = aux[8];
+			}
+
+			 if(nr_finished==nr_pieces) {
+				 
+				 nr_pieces=0;
+				 Database.update_stats_EoRequests(day_pieces);		
+				 day_pieces=Database.getpieces();
+				 print_daypieces(day_pieces);
+				 System.out.println("///////////////////////////------////////////////////////////");
+				 for (int i = 0; i < 12; i++) {
+					 aux=(decide_tools(day_pieces.get(i), w1,dock));
+					 day_pieces.get(i).setMachines(aux);
+					 day_pieces.get(i).setCurr_form(aux[1]);
+					dock[0] = aux[6];
+					dock[1] = aux[7];
+					dock[2] = aux[8];
+					
+				}
+				 
+					
+				print_daypieces(day_pieces);
+				int errors=App.send_pieces(day_pieces);
+				if (errors>0)
+					System.out.println("Some Pieces coudnt be sent correctly");
+				
+			 }
 			
 		}
-		print_daypieces(day_pieces);
-		App.send_pieces(day_pieces);
-
-//		data_analisys.start();
+		
 	}
 
 	private static void print_daypieces(ArrayList<Piece> day_pieces) {
@@ -297,7 +285,7 @@ public class sorter {
 
 	}
 
-	private static short[] decide_mach(Piece p1, warehouse w1, short[] dock) {
+	private static short[] decide_tools(Piece p1, warehouse w1, short[] dock) {
 		
 		short a[] = { 0, 0, 0, 0, 0, 0 };
 		short aux[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };

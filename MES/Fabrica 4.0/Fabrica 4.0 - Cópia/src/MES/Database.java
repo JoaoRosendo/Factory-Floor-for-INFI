@@ -61,6 +61,8 @@ public class Database {
 		long[] time={0,0};
 		int instance_dif_id=0;
 		Instant now=Instant.now();
+		
+		
 		try {
 
 			Connection con = DriverManager.getConnection(url, user, password);
@@ -110,8 +112,8 @@ public class Database {
 			
 			
 		}
-		catch(SQLException e) {
-			System.out.println("database.update_stats: "+e.getMessage());
+		catch(SQLException q) {
+			System.out.println("database.update_stats: "+q.getMessage());
 		}
 
 		try {
@@ -124,13 +126,13 @@ public class Database {
 
 			con.close();
 		}
-		catch(SQLException e) {
-			System.out.println("database.update_stats: "+e.getMessage());
+		catch(SQLException w) {
+			System.out.println("database.update_stats at deleting day_pieces: "+w.getMessage());
 		}
 
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
-			String query="INSERT INTO \"up201806577\".\"day_pieces\" (SELECT * FROM \"up201806577\".\"day_pieces_intermed\");";
+			String query="INSERT INTO day_pieces (SELECT * FROM day_pieces_intermed)";
 
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.addBatch();        	
@@ -138,9 +140,45 @@ public class Database {
 
 			con.close();
 		}
+		catch(SQLException r) {
+			System.out.println("database.update_stats at copying intermed to day_pieces: "+r.getMessage());
+		}
+		try {
+			Connection con = DriverManager.getConnection(url, user, password);
+			String query="TRUNCATE TABLE day_pieces_intermed";
+
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.addBatch();        	
+			ps.executeBatch();
+
+			con.close();
+		}
+		catch(SQLException t) {
+			System.out.println("database.update_stats at deleting intermed: "+t.getMessage());
+		}
+		
+		// |||||||||||||||||||||||||||||||||||||CODE TO TEST|||||||||||||||||||~
+		
+		
+		try {
+			Connection con = DriverManager.getConnection(url, user, password);
+			PreparedStatement ps = con.prepareStatement("INSERT INTO day_pieces_intermed (order_id,priority,final_form, days_to_finish, "
+					+ "nr_pieces, client_id) VALUES (?,?,?,?,?,?)");
+
+			ps.setInt(1, (int)  Math.random() * (8 - 1 + 1) + 1  );
+			ps.setInt(2, (int) 1 );
+			ps.setInt(3, (int) Math.random() * (9 - 1 + 1) + 1  );
+			ps.setInt(4, (int)	1 );
+			ps.setInt(5, (int) Math.random() * (11 - 1 + 1) + 1  );
+			ps.setInt(6, (int) Math.random() * (10 - 1 + 1) + 1  );
+			ps.addBatch();        	
+			ps.executeBatch();
+			ps.close();
+		}
 		catch(SQLException e) {
 			System.out.println("database.update_stats: "+e.getMessage());
 		}
+		// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 		return count;
 		
