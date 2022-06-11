@@ -7,13 +7,13 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 
 public class MyThread implements Runnable{
 	private final Thread t;
-	
+	UI info=new UI();
 	public MyThread() {
 		t= new Thread(this);
 	}
 	@Override
 	public void run() {
-		UI info=new UI();
+		
 		
 		while(true) {
 			
@@ -30,7 +30,7 @@ public class MyThread implements Runnable{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}			
-			//update_stats();
+			
 			update_gui(info);
 			
 			try {

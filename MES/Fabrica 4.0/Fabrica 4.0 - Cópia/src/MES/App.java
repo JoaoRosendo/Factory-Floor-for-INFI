@@ -83,31 +83,34 @@ public class App {
 		int ready=1;
 		NodeId nodeId;
 		int nr_pieces=0;
-		short conv_5_act_d=1;
-		short conv_5_act_e=1;
 		String v1=null;
 		String v2=null;
-		int pieces_count;
 		for(int j=0;j<day_pieces.size();j++) {
         	if(day_pieces.get(j).final_form!=0) nr_pieces++;      	
         }
+		
+		
 		for (int i=0;i<nr_pieces;i++) {
+			System.out.println("Waiting for <6 pieces on simulator");
 			while(workpieces_count()>=6){};
 			
 			ready=1;
+			System.out.println("Waiting for c5 to be ready");
 			while(ready!=0) {
+				
 				nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
 				v2=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
 				
 				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
 				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				System.out.println("C5 status:"+variable);
+//				System.out.println("C5 status:"+variable);
+				sorter.data_analisys.info.curr_op.setText("Waiting for W1 out to be free");
 				if(variable.equals("false") && v2.equals("-1-1-1-1-1-1")) {
 					ready=0;
 				}
 			}
-			System.out.println("ready:"+ready);
+			//System.out.println("ready:"+ready);
 			nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
 
 
@@ -135,12 +138,12 @@ public class App {
 				errors++;
 				System.out.println("error at"+i);
 			}
-			
+			System.out.println("Waiting for c5 to be ready 2");
 			while(!variable.equals("-1-1-1-1-1-1")) {
 				//Check C5 array
 				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
 				//System.out.println("Final while:"+variable);
-				
+				sorter.data_analisys.info.curr_op.setText("Waiting for W1 out to be free");
 				Thread.sleep(100);
 			}
 			System.out.println();
@@ -151,7 +154,7 @@ public class App {
 		return errors;
 	}
     
-    private static int workpieces_count() throws InterruptedException, ExecutionException {
+    static int workpieces_count() throws InterruptedException, ExecutionException {
 		int counter=0;
 		NodeId nodeId;
 		for (int i=0;i<20;i++) {

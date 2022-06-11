@@ -18,9 +18,13 @@ class UI extends JFrame{
 	JLabel daily_pieces4 =new JLabel();	JLabel daily_pieces5 =new JLabel();	JLabel daily_pieces6 =new JLabel();
 	JLabel daily_pieces7 =new JLabel();	JLabel daily_pieces8 =new JLabel();	JLabel daily_pieces9 =new JLabel();
 	JLabel daily_pieces10 =new JLabel();JLabel daily_pieces11 =new JLabel();
+	
+	JLabel curr_op =new JLabel();
+	JLabel running =new JLabel();
+	
 	public UI(){ 
 		setTitle("User Interface for Daily Information");
-		setSize(600,600);
+		setSize(800,600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(null);
 		setVisible(true);
@@ -73,6 +77,14 @@ class UI extends JFrame{
 		daily_pieces11.setVisible(true);	
 		this.add(daily_pieces11);
 		
+		curr_op.setBounds(500,10, 200,100);
+		curr_op.setVisible(true);	
+		this.add(curr_op);
+		
+		running.setBounds(500,50, 200,100);
+		running.setVisible(true);	
+		this.add(running);
+		
 	}
 }
 
@@ -80,17 +92,16 @@ public class sorter {
 	static volatile ArrayList<Piece> day_pieces;
 	static volatile warehouse w1 = new warehouse(10, 10);
 	static volatile ArrayList<Machine> machines;
-	
+	static volatile MyThread data_analisys=new MyThread();
 	
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
 
-		short[] aux = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		short[] aux = { -1, -1, -1, -1, -1, -1, 0, 0, 0 };
 		short[] dock = { 0, 0, 0 };
-		int warning_start_day = 0;
 		int nr_pieces = 0;
 		int nr_finished = 0;
 		App.start();
-		MyThread data_analisys=new MyThread();
+		
 		
 		int start=0;
 		while (true) {
@@ -111,13 +122,24 @@ public class sorter {
 			 if(nr_finished==nr_pieces) {
 				 if(start==1) {
 					 nr_pieces=0;
+					 data_analisys.info.curr_op.setText("Updating stats on DB");
 					 Database.update_stats_EoRequests(day_pieces);	
-					 day_pieces.clear();
+					 System.out.println("Going into Waiting for new orders");
+					 while(App.workpieces_count()!=0){data_analisys.info.curr_op.setText("Waiting for new orders");};
+					 data_analisys.info.curr_op.setText("Getting new Orders");
 				 }
-				 
+				 System.out.println("Going into getpieces");
 				 day_pieces=Database.getpieces();
-				 print_daypieces(day_pieces);
-				 System.out.println("///////////////////////////------////////////////////////////");
+				 
+				 
+				 //print_daypieces(day_pieces);
+				 for (int k = 0; k < aux.length; k++) {
+					aux[k]=-1;
+					
+				}
+				 for (int j = 0; j < dock.length; j++) {
+					dock[j]=0;
+				}
 				 for (int i = 0; i < 12; i++) {
 					 aux=(decide_tools(day_pieces.get(i), w1,dock));
 					 day_pieces.get(i).setMachines(aux);
@@ -131,7 +153,9 @@ public class sorter {
 				if(start==0) {
 					data_analisys.start();
 				}
-				print_daypieces(day_pieces);
+				data_analisys.info.curr_op.setText("Sending order to PLC");
+				//print_daypieces(day_pieces);
+				System.out.println("Going into send_pieces");
 				int errors=App.send_pieces(day_pieces);
 				if (errors>0)
 					System.out.println("Some Pieces coudnt be sent correctly");
@@ -161,7 +185,7 @@ public class sorter {
 	private static short[] decide_tools(Piece p1, warehouse w1, short[] dock) {
 		
 		short a[] = {-1,-1,-1,-1,-1,-1 };
-		short aux[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+		short aux[] = { -1, -1, -1, -1, -1, -1, 0, 0, 0 };
 		aux[6] = dock[0];
 		aux[7] = dock[1];
 		aux[8] = dock[2];
