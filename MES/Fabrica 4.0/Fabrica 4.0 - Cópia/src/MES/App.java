@@ -98,7 +98,6 @@ public class App {
 			while(ready!=0) {
 				nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
 				v2=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
-				System.out.println("while:"+v2);
 				
 				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
