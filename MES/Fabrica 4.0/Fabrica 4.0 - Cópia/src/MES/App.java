@@ -102,7 +102,7 @@ public class App {
 				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
 				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				System.out.println("C5 status:  "+variable);
+				System.out.println("C5 status:"+variable);
 				if(variable.equals("false") && v2.equals("-1-1-1-1-1-1")) {
 					ready=0;
 				}
@@ -128,7 +128,8 @@ public class App {
 			//System.out.println(variable);
 
 			//Check if the sent array and the one we have here are equal variable =
-			variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 47).replace(", ", "");
+	        variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
 			System.out.println("opcua: "+variable);
 			if(variable.equals(machines_s)==true) { 
 				errors++;
@@ -232,14 +233,14 @@ public class App {
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
 
-        for (int i=0;i<24;i++) {
+        for (int i=0;i<20;i++) {
         	//checks all pieces to see if they're finished
 	        NodeId nodeId = new NodeId(4,array_ids[i]);
 	        //reads the array
-	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
-	        
+	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
 	        for(int j=0;j<12;j++) {
-	        	if(""+variable.charAt(0)==String.valueOf(day_pieces.get(j).getPieceid())) {
+	        	if((""+variable.charAt(0)).equals( String.valueOf(day_pieces.get(j).getPieceid()))) {
 	        		day_pieces.get(j).setCurr_form(Short.valueOf(""+variable.charAt(1)));
 	        		if(day_pieces.get(j).getCurr_form()==day_pieces.get(j).getFinal_form()) {
 	        			day_pieces.get(j).setFinished((short)1);
@@ -249,8 +250,8 @@ public class App {
 	        
 	              
 
-	        System.out.println(variable);
-	        System.out.println(i);
+//	        System.out.println("check_pieces:"+variable);
+//	        System.out.println(i);
         }
         return day_pieces;
     }
