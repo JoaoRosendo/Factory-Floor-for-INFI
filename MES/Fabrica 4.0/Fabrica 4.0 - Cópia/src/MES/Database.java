@@ -46,7 +46,7 @@ public class Database {
 		}
 		// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 		
-		ArrayList<Piece> pieces= new ArrayList<>();
+		
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 			
@@ -117,7 +117,8 @@ public class Database {
 		}
 		catch(SQLException t) {
 			System.out.println("database.update_stats at deleting intermed: "+t.getMessage());
-		}	
+		}
+		ArrayList<Piece> pieces= new ArrayList<>();
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 			String query="SELECT * FROM day_pieces ORDER BY nr_pieces DESC";
@@ -134,7 +135,10 @@ public class Database {
 					newEntry = new Piece(rs.getString("client_id"),(short)rs.getInt("order_id"),i, buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)1
 							, (short)0, Instant.now(), (double)0 	);
 					pieces.add(newEntry);
-					if(i==12) return pieces;
+					if(i==12) {
+						con.close();
+						return pieces;
+					}
 				}
 				if (i<=12) {
 					while(i<=12) {

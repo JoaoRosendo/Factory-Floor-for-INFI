@@ -40,12 +40,12 @@ public class App {
 			};
 	
 	static String[] maq_ids= {
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M11_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M12_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M13_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M21_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M22_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M23_pecas_feitas",
 			};
 	
 	static String[] maq_tools= {
@@ -149,7 +149,7 @@ public class App {
 			System.out.println();
 			System.out.println();
 		}
-		System.out.println(errors);
+		
 
 		return errors;
 	}
@@ -184,26 +184,27 @@ public class App {
 		
 	}
     
-    public ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
+    public static ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
 		client.connect().get();
 		short total=0;
-		for(int i=0;i<7;i++) {
+		for(int i=0;i<6;i++) {
 		
 			NodeId nodeId_midday = new NodeId(4,maq_ids[i]);
 			
 			//Read array of nr of pieces of each type and save
-			String type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			for(int j=0;i<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+type_count.charAt(j));}
-			for(int j=0;i<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
-			machines.get(i).pieces_total=total;
+			String variable = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).get().toString();//.substring(20,60).replace(", ", "");
+			//System.out.println(variable);
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]")).replace(", ", "");
+	        //System.out.println(variable);
+			for(int j=0;j<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+variable.charAt(j));
+			}
+			for(int j=0;j<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
+			machines.get(i).setPieces_total(total);;
+			//System.out.println("total"+machines.get(i).getPieces_total());
 			total=0;
 			
-			
-			//Read tool in use
-			type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			machines.get(i).setTool(Short.parseShort(""+type_count.charAt(5)));
 			
 		}
 		

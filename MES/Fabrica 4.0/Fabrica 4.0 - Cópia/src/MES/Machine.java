@@ -18,18 +18,27 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
 
 public class Machine {
-    static int id;
-    static short tool=0;
-    static double op_time=0;
-    static short[] op_pieces;
-    static short pieces_total;
+    public int id;
+    public short tool=0;
+    public int op_time=0; //seconds
+    public short[] op_pieces= {0,0,0,0,0,0,0,0,0};
+    public short pieces_total;
 	
-	public static short getPieces_total() {
+	public Machine(int id, short tool, int op_time, short[] op_pieces, short pieces_total) {
+		super();
+		this.id = id;
+		this.tool = tool;
+		this.op_time = op_time;
+		this.op_pieces = op_pieces;
+		this.pieces_total = pieces_total;
+	}
+
+	public  short getPieces_total() {
 		return pieces_total;
 	}
 
-	public static void setPieces_total(short pieces_total) {
-		Machine.pieces_total = pieces_total;
+	public void setPieces_total(short pieces_total) {
+		this.pieces_total = pieces_total;
 	}
 	
 	public int getId() {
@@ -48,11 +57,11 @@ public class Machine {
 		this.tool = tool;
 	}
 
-	public double getOp_time() {
+	public int getOp_time() {
 		return op_time;
 	}
 
-	public void setOp_time(double op_time) {
+	public void setOp_time(int op_time) {
 		this.op_time = op_time;
 	}
 

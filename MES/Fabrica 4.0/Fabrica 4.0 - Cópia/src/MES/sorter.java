@@ -21,6 +21,9 @@ class UI extends JFrame{
 	
 	JLabel curr_op =new JLabel();
 	JLabel running =new JLabel();
+	JLabel finished=new JLabel();
+	JLabel mac1=new JLabel();JLabel mac2=new JLabel();JLabel mac3=new JLabel();JLabel mac4=new JLabel();
+	JLabel mac5=new JLabel();JLabel mac6=new JLabel();
 	
 	public UI(){ 
 		setTitle("User Interface for Daily Information");
@@ -85,13 +88,40 @@ class UI extends JFrame{
 		running.setVisible(true);	
 		this.add(running);
 		
+		finished.setBounds(500,100, 200,100);
+		finished.setVisible(true);	
+		this.add(finished);
+		
+		mac1.setBounds(10,410, 500,20);
+		mac1.setVisible(true);	
+		this.add(mac1);
+		
+		mac2.setBounds(10,440, 500,20);
+		mac2.setVisible(true);	
+		this.add(mac2);
+		
+		mac3.setBounds(10,470, 500,20);
+		mac3.setVisible(true);	
+		this.add(mac3);
+		
+		mac4.setBounds(10,500, 500,20);
+		mac4.setVisible(true);	
+		this.add(mac4);
+		
+		mac5.setBounds(10,530, 500,20);
+		mac5.setVisible(true);	
+		this.add(mac5);
+		
+		mac6.setBounds(10,560, 500,20);
+		mac6.setVisible(true);	
+		this.add(mac6);
+		
 	}
 }
 
 public class sorter {
 	static volatile ArrayList<Piece> day_pieces;
 	static volatile warehouse w1 = new warehouse(10, 10);
-	static volatile ArrayList<Machine> machines;
 	static volatile MyThread data_analisys=new MyThread();
 	
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
@@ -125,7 +155,7 @@ public class sorter {
 					 data_analisys.info.curr_op.setText("Updating stats on DB");
 					 Database.update_stats_EoRequests(day_pieces);	
 					 System.out.println("Going into Waiting for new orders");
-					 while(App.workpieces_count()!=0){data_analisys.info.curr_op.setText("Waiting for new orders");};
+					 while(App.workpieces_count()!=0){data_analisys.info.curr_op.setText("Waiting for 0 pieces being processed");};
 					 data_analisys.info.curr_op.setText("Getting new Orders");
 				 }
 				 System.out.println("Going into getpieces");
