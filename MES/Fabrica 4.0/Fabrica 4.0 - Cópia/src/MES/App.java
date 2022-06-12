@@ -141,9 +141,9 @@ public class App {
 			System.out.println("Waiting for c5 to be ready 2");
 			while(!variable.equals("-1-1-1-1-1-1")) {
 				//Check C5 array
-				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
+				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+		        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
 				//System.out.println("Final while:"+variable);
-				sorter.data_analisys.info.curr_op.setText("Waiting for W1 out to be free");
 				Thread.sleep(100);
 			}
 			System.out.println();
