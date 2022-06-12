@@ -1,6 +1,8 @@
 package MES;
 
 import java.sql.Connection;
+import java.util.Random;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +19,32 @@ public class Database {
 	
 	public static ArrayList<Piece> getpieces(){
 		
+		// |||||||||||||||||||||||||||||||||||||CODE TO TEST|||||||||||||||||||~
+		
+		
+		try {
+			Connection con = DriverManager.getConnection(url, user, password);
+			System.out.println("inserting into Day_pieces_intermed");
+			PreparedStatement ps = con.prepareStatement("INSERT INTO day_pieces_intermed (order_id,priority,final_form, days_to_finish, "
+					+ "nr_pieces, client_id, start_date,warehouse_pieces,pieces_ordered) VALUES (?,?,?,?,?,?,?,?,?)");
+
+			ps.setInt(1, (int)  (int)(Math.random()*(9-1+1)+1) );
+			ps.setInt(2, (int) 1 );
+			ps.setInt(3, (int)  (int)(Math.random()*(9-3+1)+3));
+			ps.setInt(4, (int)	1 );
+			ps.setInt(5, (int) (int)(Math.random()*(11-3+1)+3));
+			ps.setString(6, "AA"  );
+			ps.setInt(7, 1  );
+			ps.setInt(8, 1  );
+			ps.setInt(9, 1  );
+			ps.addBatch();        	
+			ps.executeBatch();
+			ps.close();
+		}
+		catch(SQLException e) {
+			System.out.println("database.update_stats: "+e.getMessage());
+		}
+		// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 		
 		ArrayList<Piece> pieces= new ArrayList<>();
 		try {
@@ -198,34 +226,34 @@ public class Database {
 		
 		
 		
-		try {
-			Connection con = DriverManager.getConnection(url, user, password);
-
-			String query="INSERT INTO day_pieces (SELECT order_id, priority, final_form,days_to_finish, nr_pieces,client_id FROM day_pieces_intermed)";
-			System.out.println("Copy Day_pieces_intermed");
-			PreparedStatement ps = con.prepareStatement(query);
-			ps.addBatch();        	
-			ps.executeBatch();
-
-			
-		}
-		catch(SQLException r) {
-			System.out.println("database.update_stats at copying intermed to day_pieces: "+r.getMessage());
-		}
-		try {
-			Connection con = DriverManager.getConnection(url, user, password);
-
-			String query="TRUNCATE TABLE day_pieces_intermed";
-
-			PreparedStatement ps = con.prepareStatement(query);
-			ps.addBatch();        	
-			ps.executeBatch();
-
-			
-		}
-		catch(SQLException t) {
-			System.out.println("database.update_stats at deleting intermed: "+t.getMessage());
-		}	
+//		try {
+//			Connection con = DriverManager.getConnection(url, user, password);
+//
+//			String query="INSERT INTO day_pieces (SELECT order_id, priority, final_form,days_to_finish, nr_pieces,client_id FROM day_pieces_intermed)";
+//			System.out.println("Copy Day_pieces_intermed");
+//			PreparedStatement ps = con.prepareStatement(query);
+//			ps.addBatch();        	
+//			ps.executeBatch();
+//
+//			
+//		}
+//		catch(SQLException r) {
+//			System.out.println("database.update_stats at copying intermed to day_pieces: "+r.getMessage());
+//		}
+//		try {
+//			Connection con = DriverManager.getConnection(url, user, password);
+//
+//			String query="TRUNCATE TABLE day_pieces_intermed";
+//
+//			PreparedStatement ps = con.prepareStatement(query);
+//			ps.addBatch();        	
+//			ps.executeBatch();
+//
+//			
+//		}
+//		catch(SQLException t) {
+//			System.out.println("database.update_stats at deleting intermed: "+t.getMessage());
+//		}	
 
 		return count;
 		
