@@ -248,7 +248,7 @@ public class Database {
 		return empty;
 	}
 	
-	/*public void selectStats() throws SQLException {
+	public void selectStats() throws SQLException {
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
 		int id = 0;
@@ -262,8 +262,8 @@ public class Database {
 			client = rs.getString("client");
 			date = rs.getInt("date");
 		}
-		insertCost(id, s, client, date);
-	}*/
+		insertCost(id, client, date);
+	}
 	
 	public order getOrder(int id) throws SQLException {
 		Connection c = ConnectDB();
@@ -392,16 +392,15 @@ public class Database {
 		return Tc;
 	}
 	
-	public float insertCost(int id, supplier s, String client, int Dd) throws SQLException {
+	public float insertCost(int id, String client, int Dd) throws SQLException {
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
+		order order = getOrder(id);
 		
 		int Pt = 0; //production time in secs
 		int penalty = 0;
-		int Rc = s.getPrice()*s.getQty(); //material raw cost
-		int Ad = s.getDlvrDate()-1;
-		
-		order order = getOrder(id);
+		int Rc = 55*order.getQty(); //material raw cost
+		int Ad = Dd-1;
 		
 		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece, date FROM day_stats WHERE orderid ='"+order.getId()+"';");
 		while(rs.next()) {
@@ -421,15 +420,6 @@ public class Database {
 		stmt.executeUpdate(sql);
 		
 		return Tc;
-	}
-	
-	public void updateCost(int id, float Tc) throws SQLException {
-		Connection c = ConnectDB();
-		Statement stmt = c.createStatement();
-		
-		String sql = "UPDATE costs WHERE id = '"+id+"' SET cost = "+Tc+";";
-		
-		stmt.executeUpdate(sql);
 	}
 	
 }

@@ -99,6 +99,13 @@ public class UDP extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+    			
+    			try {
+					db.selectStats();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	    } 
     	}
     }  
