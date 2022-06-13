@@ -115,20 +115,16 @@ public class MPS {
 	    return s_P2;
 	}
 	
-	public int orderPieces(int piece, int qty) throws SQLException {
+	public supplier orderPieces(int piece, int qty) throws SQLException {
 		supplier s = new supplier();
-		
-		int pieces_ordered = 0;
 		
 		if(piece==1) {
 			s = order_p1_from_supplier(qty);
-			pieces_ordered = s.getQty();
 		} else {
 			s = order_p2_from_supplier(qty);
-			pieces_ordered = s.getQty();
 		}
 		
-		return pieces_ordered;
+		return s;
 	}
 	
 	public float cost (int id) {

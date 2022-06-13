@@ -53,6 +53,12 @@ public class UDP extends Thread {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+    	try {
+			db.startWarehouse();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         
     	while(true) { 
     		if((t1 = System.currentTimeMillis()) - t0 >= 1000 * 60) { 

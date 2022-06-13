@@ -82,6 +82,15 @@ public class Database {
 		return day;
 	}
 	
+	public void startWarehouse() throws SQLException {
+		Connection c = ConnectDB();
+		Statement stmt = c.createStatement();
+		String sql = "UPDATE warehouse SET quantity = 6 WHERE piece='1';";
+		stmt.executeUpdate(sql);
+		sql = "UPDATE warehouse SET quantity = 6 WHERE piece='2';";
+		stmt.executeUpdate(sql);
+	}
+	
 	public int getDate() throws SQLException {
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
@@ -98,7 +107,7 @@ public class Database {
 		Statement stmt = c.createStatement();
 		String sql;
 		MPS mps = new MPS(); 
-		
+		supplier s = new supplier();
 		plan prod_plan = new plan();
 		
 		prod_plan.setId(order.getId());
@@ -116,9 +125,10 @@ public class Database {
 		
 		updateNrOfPiecesInWarehouse(prod_plan.getStartingForm(), prod_plan.getQty());
 		int warehouse_pieces = numberOfPiecesInWarehouse(prod_plan.getStartingForm());
-		int pieces_ordered = mps.orderPieces(prod_plan.getStartingForm(), prod_plan.getQty());
+		s = mps.orderPieces(prod_plan.getStartingForm(), prod_plan.getQty());
+		int pieces_ordered = s.getQty();
 		
-		int cost = 0;
+		float cost = cost(prod_plan, s);
 			
 		sql = "INSERT INTO production_plan (order_id,number,client,final_form,starting_piece,quantity,start_date,days_to_finish,warehouse_pieces,pieces_ordered,cost) "
         		+ "VALUES ("+prod_plan.getId()+","
@@ -167,17 +177,6 @@ public class Database {
 		return plan;
 	}
 	
-	/*public void updatePlan(plan plan) throws SQLException {
-		Connection c = ConnectDB();
-		Statement stmt = c.createStatement();
-		
-		String sql = "UPDATE production_plan SET days_to_finish = "+(plan.getDueDate()-getDate())+" WHERE order_id = "+plan.getId()+";";
-		stmt.executeUpdate(sql);
-		
-		sql = "UPDATE day_pieces_intermed SET days_to_finish = "+(plan.getDueDate()-getDate())+" WHERE order_id = "+plan.getId()+";";
-		stmt.executeUpdate(sql);
-	}*/
-	
 	public void getPlan() throws SQLException {
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
@@ -197,26 +196,20 @@ public class Database {
 			plan.setQty(rs.getInt("quantity"));
 			plan.setCost(rs.getInt("cost"));
 			
-			if(checkExists(plan.getId()) == false) {
-				if(plan.getStartDate() == getDate()) {
-					sendToMES(plan);
-					//updateNrOfPiecesInWarehouse(plan.getStartingForm(),plan.getQty());
-					System.out.println("*****************************************");
-					System.out.println("* START MANUFACTURING ORDER NUMBER "+plan.getNumber()+"	*");
-					System.out.println("* Client: "+plan.getClient()+"				*");
-				    System.out.println("* Due date: "+plan.getDueDate()+"				*");
-				    System.out.println("* Pieces: "+plan.getQty()+" P"+plan.getFinalForm()+"				*");
-					System.out.println("*****************************************");
+			if(countOrders() == true) {
+				if(checkExists(plan.getId()) == false) {
+					if(plan.getStartDate() == getDate()) {
+						sendToMES(plan);
+						//updateNrOfPiecesInWarehouse(plan.getStartingForm(),plan.getQty());
+						System.out.println("*****************************************");
+						System.out.println("* START MANUFACTURING ORDER NUMBER "+plan.getNumber()+"	*");
+						System.out.println("* Client: "+plan.getClient()+"				*");
+					    System.out.println("* Due date: "+plan.getDueDate()+"				*");
+					    System.out.println("* Pieces: "+plan.getQty()+" P"+plan.getFinalForm()+"				*");
+						System.out.println("*****************************************");
+					}
 				}
-			}
-			if(plan.getDueDate() == getDate()) {
-				System.out.println("*****************************************");
-				System.out.println("* DELIVER ORDER NUMBER "+plan.getNumber()+"	*");
-				System.out.println("* Client: "+plan.getClient()+"				*");
-			    System.out.println("* Due date: "+plan.getDueDate()+"				*");
-			    System.out.println("* Pieces: "+plan.getQty()+" P"+plan.getFinalForm()+"				*");
-				System.out.println("*****************************************");
-			}
+			}	
 		}
 	}
 	
@@ -236,6 +229,22 @@ public class Database {
 		if (count > 0) e = true; else e = false;
 		
 		return e;
+	}
+	
+	public boolean countOrders() throws SQLException {
+		Connection c = ConnectDB();
+		Statement stmt = c.createStatement();
+		boolean e = false;
+		int count = 0;
+		
+		String sql = "SELECT COUNT(*) FROM day_pieces_intermed;";
+		ResultSet rs = stmt.executeQuery(sql);
+		while(rs.next()) {
+			count = rs.getInt(1);
+		}
+		if (count > 2) e = true; else e = false;
+		
+		return !e;
 	}
 	
 	public order getOrder(int id) throws SQLException {
@@ -335,20 +344,26 @@ public class Database {
 		}
 	}
 	
-	public int stats() throws SQLException {
-		int avg_time = 0;
+	public float cost(plan plan, supplier s) throws SQLException {
+		int Pt = 0; //production time in secs
+		int Rc = s.getPrice()*s.getQty(); //material raw cost
+		int Dd = 0;
+		int Ad = s.getDlvrDate();
+		
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
 		
-		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece FROM day_stats;");
+		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece FROM day_stats WHERE orderid ='"+plan.getId()+"';");
 		while(rs.next()) {
-			avg_time = rs.getInt("avg_time_piece");
+			Pt = rs.getInt("avg_time_piece");
 		}
 		
-		return avg_time;
+		int Pc = Pt * 1;//production cost
+		
+		int Dc = Rc + (Dd + Ad);
+		int Tc = Rc + Pc + Dc; //total cost Tc = Rc + Pc + Dc
+		
+		return Tc;
 	}
-	
-	
-	
 }
 
