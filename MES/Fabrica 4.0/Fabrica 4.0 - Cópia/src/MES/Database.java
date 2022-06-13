@@ -2,14 +2,14 @@ package MES;
 
 import java.sql.Connection;
 import java.util.Random;
-
+import java.time.*;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
+
 
 public class Database {
     private static String url = "jdbc:postgresql://db.fe.up.pt:5432/up201806577";
@@ -32,17 +32,17 @@ public class Database {
 			ps.setInt(2, (int) 1 );
 			ps.setInt(3, (int)  (int)(Math.random()*(9-3+1)+3));
 			ps.setInt(4, (int)	1 );
-			ps.setInt(5, (int) (int)(Math.random()*(11-3+1)+3));
+			ps.setInt(5, (int) (int)(Math.random()*(12-3+1)+3));
 			ps.setString(6, "AA"  );
 			ps.setInt(7, 1  );
 			ps.setInt(8, 1  );
-			ps.setInt(9, 1  );
+			ps.setInt(9, 6  );
 			ps.addBatch();        	
 			ps.executeBatch();
 			ps.close();
 		}
 		catch(SQLException e) {
-			System.out.println("database.update_stats: "+e.getMessage());
+			System.out.println("database.getpieces random gen: "+e.getMessage());
 		}
 		// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 		
@@ -70,7 +70,7 @@ public class Database {
 
 		}
 		catch(SQLException r) {
-			System.out.println("database.update_stats at copying intermed to day_pieces: "+r.getMessage());
+			System.out.println("database.getpieces at waiting fo intermed not empty: "+r.getMessage());
 		}
 		
 		try {
@@ -86,14 +86,14 @@ public class Database {
 			
 		}
 		catch(SQLException w) {
-			System.out.println("database.update_stats at deleting day_pieces: "+w.getMessage());
+			System.out.println("database.getpieces at deleting day_pieces: "+w.getMessage());
 		}
 
 		
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 
-			String query="INSERT INTO day_pieces (SELECT order_id, priority, final_form,days_to_finish, nr_pieces,client_id FROM day_pieces_intermed)";
+			String query="INSERT INTO day_pieces (SELECT order_id, priority, final_form,days_to_finish, nr_pieces,client_id,warehouse_pieces, pieces_ordered FROM day_pieces_intermed)";
 			System.out.println("Copy Day_pieces_intermed");
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.addBatch();        	
@@ -129,7 +129,8 @@ public class Database {
 			
 			while(rs.next()) {
 				short i=0;
-				short[] buff = {0,0,0,0,0,0};
+				short[] buff = {-1,-1,-1,-1,-1,-1};
+				sorter.nr_pieces_ordered=rs.getInt("pieces_ordered");
 				for(i=1;i<=rs.getInt("nr_pieces");i++) {
 					
 					newEntry = new Piece(rs.getString("client_id"),(short)rs.getInt("order_id"),i, buff, /*rs.getInt("priority")*/(short)1, (short)rs.getInt("final_form"), (short)1

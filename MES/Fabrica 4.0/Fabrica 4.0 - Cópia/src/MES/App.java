@@ -1,6 +1,7 @@
 package MES;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -92,8 +93,11 @@ public class App {
 		
 		for (int i=0;i<nr_pieces;i++) {
 			System.out.println("Waiting for <6 pieces on simulator");
-			while(workpieces_count()>=6){};
+			if(i>=5) {
+				while(workpieces_count()>=6){};
+			}
 			
+			System.out.println("Workpieces:"+workpieces_count());
 			ready=1;
 			System.out.println("Waiting for c5 to be ready");
 			while(ready!=0) {
@@ -146,7 +150,7 @@ public class App {
 				//System.out.println("Final while:"+variable);
 				Thread.sleep(100);
 			}
-			System.out.println();
+			System.out.println("closing Waiting for c5 to be ready 2");
 			System.out.println();
 		}
 		
@@ -159,10 +163,13 @@ public class App {
 		NodeId nodeId;
 		for (int i=0;i<20;i++) {
 			nodeId=new NodeId(4,array_ids[i]);
-			String variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
+			String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+            variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
+            
+            //System.out.println(variable);
+            
 			if(!variable.equals("-1-1-1-1-1-1")) counter++;
-		}
-		
+		}		
 		return counter;
 	}
 
@@ -236,29 +243,66 @@ public class App {
     
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
+        //System.out.println("check pieces||||||||||||||||||||||||||||");
+    	String v[][]=null;
+    	for (int i=0;i<20;i++) {
+    		//checks all pieces to see if they're finished
+    		NodeId nodeId = new NodeId(4,array_ids[i]);
+    		//reads the array
+    		String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(" ", "");
+    		variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
+    		
+    		for(int j=0;j<day_pieces.size();j++) {
+    			//System.out.println("check_pieces:"+variable.charAt(0)+variable.charAt(1)+" id"+day_pieces.get(j).getPieceid()+day_pieces.get(j).getCurr_form());
+    			StringTokenizer st =new StringTokenizer(variable,",");
+    			String token = st.nextToken();
+    			//System.out.println("token" + token);
+    			if(String.valueOf(day_pieces.get(j).getPieceid()).equals(token)) {
+    				//System.out.println("id"+day_pieces.get(j).getPieceid()+"="+token);
+    				token = st.nextToken();
+    				if(day_pieces.get(j).getCurr_form()!=(short)Short.valueOf(token)) {
+    					day_pieces.get(j).setCurr_form((short)Short.valueOf(token));
 
-        for (int i=0;i<20;i++) {
-        	//checks all pieces to see if they're finished
-	        NodeId nodeId = new NodeId(4,array_ids[i]);
-	        //reads the array
-	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
-	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
-	        for(int j=0;j<12;j++) {
-	        	if((""+variable.charAt(0)).equals( String.valueOf(day_pieces.get(j).getPieceid()))) {
-	        		day_pieces.get(j).setCurr_form(Short.valueOf(""+variable.charAt(1)));
-	        		if(day_pieces.get(j).getCurr_form()==day_pieces.get(j).getFinal_form()) {
-	        			day_pieces.get(j).setFinished((short)1);
-	        		}
-	        	}
-	        }
-	        
-	              
-
+    				}
+    				if(day_pieces.get(j).getCurr_form()==day_pieces.get(j).getFinal_form()) {
+    					day_pieces.get(j).setFinished((short)1);
+    				}
+    			}
+    		}
 //	        System.out.println("check_pieces:"+variable);
 //	        System.out.println(i);
         }
+        
+       
+        
         return day_pieces;
     }
+
+	public static int pieces_ordered(int type_1, int type_2) throws InterruptedException, ExecutionException {
+		int w1_size=24-(type_1+type_2);
+		int t1=0,t2=0;
+		String variable;
+		NodeId nodeId1 = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.pieces1_wh1");
+		NodeId nodeId2 = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.pieces2_wh1");
+		Variant v = new Variant(0); DataValue dv = new DataValue(v, null, null); 
+		variable = client.writeValue(nodeId1,dv).get().toString();
+		variable = client.writeValue(nodeId2,dv).get().toString();
+		int w1_size_aux=0;
+		while(w1_size_aux!=24){
+			
+			variable = client.readValue(0, TimestampsToReturn.Both, nodeId1).get().toString().substring(30, 35);
+			StringTokenizer st =new StringTokenizer(variable,"}");
+			variable=st.nextToken();
+			t1=Short.valueOf(variable);
+			variable = client.readValue(0, TimestampsToReturn.Both, nodeId2).get().toString().substring(30, 35);
+			st =new StringTokenizer(variable,"}");
+			variable=st.nextToken();
+			t2=Short.valueOf(variable);
+			w1_size_aux=w1_size+t1+t2;
+		}		
+		
+		return 1;
+	}
     
 
 }

@@ -61,7 +61,7 @@ public class MyThread implements Runnable{
 			update_gui(info, nr_pieces, nr_finished,machines);
 			
 			try {
-				Thread.sleep(500);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();

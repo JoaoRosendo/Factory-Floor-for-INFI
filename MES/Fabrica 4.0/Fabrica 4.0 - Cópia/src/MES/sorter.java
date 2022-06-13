@@ -1,15 +1,23 @@
 package MES;
 
 import java.io.*;
-import java.time.Instant;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+
 import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-
+import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
 
 class UI extends JFrame{
@@ -19,8 +27,8 @@ class UI extends JFrame{
 	JLabel daily_pieces7 =new JLabel();	JLabel daily_pieces8 =new JLabel();	JLabel daily_pieces9 =new JLabel();
 	JLabel daily_pieces10 =new JLabel();JLabel daily_pieces11 =new JLabel();
 	
-	JLabel curr_op =new JLabel();
-	JLabel running =new JLabel();
+	JLabel curr_op =new JLabel();JLabel pieces_ordered =new JLabel();
+	JLabel running =new JLabel();JLabel warehouse_status =new JLabel();
 	JLabel finished=new JLabel();
 	JLabel mac1=new JLabel();JLabel mac2=new JLabel();JLabel mac3=new JLabel();JLabel mac4=new JLabel();
 	JLabel mac5=new JLabel();JLabel mac6=new JLabel();
@@ -84,7 +92,7 @@ class UI extends JFrame{
 		curr_op.setVisible(true);	
 		this.add(curr_op);
 		
-		running.setBounds(500,50, 200,100);
+		running.setBounds(500,50, 250,30);
 		running.setVisible(true);	
 		this.add(running);
 		
@@ -116,14 +124,22 @@ class UI extends JFrame{
 		mac6.setVisible(true);	
 		this.add(mac6);
 		
+		pieces_ordered.setBounds(500,130, 100,20);
+		pieces_ordered.setVisible(true);	
+		this.add(pieces_ordered);
+		
+		warehouse_status.setBounds(500,150, 100,20);
+		warehouse_status.setVisible(true);	
+		this.add(warehouse_status);
+		
 	}
 }
 
 public class sorter {
 	static volatile ArrayList<Piece> day_pieces;
-	static volatile warehouse w1 = new warehouse(10, 10);
+	static volatile warehouse w1 = new warehouse(6, 6);
 	static volatile MyThread data_analisys=new MyThread();
-	
+	static volatile int nr_pieces_ordered=0;
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
 
 		short[] aux = { -1, -1, -1, -1, -1, -1, 0, 0, 0 };
@@ -131,12 +147,22 @@ public class sorter {
 		int nr_pieces = 0;
 		int nr_finished = 0;
 		App.start();
-		
-		
+		int type_1=0;
+		int type_2=0;
+//		OpcUaClient client = OpcUaClient.create("opc.tcp://Vasco-Laptop:4840");
+//        client.connect().get();
+//        NodeId nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.pieces1_wh1");
+//		String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35)
+//		System.out.println(variable);
 		int start=0;
+//		while(true) {
+//			
+//		}
 		while (true) {
 			nr_finished=0;
 			nr_pieces=0;
+			type_1=0;
+			type_2=0;
 			if (start==1) {				
 				for(int j=0;j<day_pieces.size();j++) {
 			
@@ -159,6 +185,8 @@ public class sorter {
 					 data_analisys.info.curr_op.setText("Getting new Orders");
 				 }
 				 System.out.println("Going into getpieces");
+				 
+				 
 				 day_pieces=Database.getpieces();
 				 
 				 
@@ -182,6 +210,21 @@ public class sorter {
 				 
 				if(start==0) {
 					data_analisys.start();
+				}
+				if(start==1) {
+					for(int i=0;i<day_pieces.size();i++) {
+
+						if(day_pieces.get(i).getCurr_form()==2) {
+							type_2++;
+						}
+						if(day_pieces.get(i).getCurr_form()==1) {
+							type_1++;
+						}
+
+					}
+					data_analisys.info.curr_op.setText("Insert"+type_1+" P1 and "+type_2+"P2");
+				
+					App.pieces_ordered(type_1,type_2);
 				}
 				data_analisys.info.curr_op.setText("Sending order to PLC");
 				//print_daypieces(day_pieces);
