@@ -4,10 +4,10 @@ import java.time.Instant;
 
 public class Piece {
     
-	public short clientid;
+	public String clientid;
 	 public short orderid;
 	 public short pieceid;
-	 public short[] machines = {0,0,0,0,0,0,0,0,0}; // tem em cada posição a próxima máquinas que vai utilizar
+	 public short[] machines = {-1,-1,-1,-1,-1,-1,-1,-1,-1}; // tem em cada posição a próxima máquinas que vai utilizar
 	 public short priority;
 	 public short final_form;
 	 public short curr_form=1;
@@ -15,7 +15,7 @@ public class Piece {
 	 public Instant start;
 	public double cost;
 
-	public Piece(short clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
+	public Piece(String clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
 			short curr_form, short finished, Instant start, double cost) {
 		super();
 		this.clientid = clientid;
@@ -30,11 +30,11 @@ public class Piece {
 		this.cost = cost;
 	}
 
-	public short getClientid() {
+	public String getClientid() {
 		return clientid;
 	}
 
-	public void setClientid(short clientid) {
+	public void setClientid(String clientid) {
 		this.clientid = clientid;
 	}
 

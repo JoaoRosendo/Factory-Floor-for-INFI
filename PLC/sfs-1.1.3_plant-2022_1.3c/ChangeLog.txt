@@ -1,0 +1,9 @@
+#####################################################
+# ChangeLog for Plant.properties of Shop Floor for  #
+# Industrial Informatics, 2021/2022                 #
+#####################################################
+
+
+2022-03-02  -  v1.0   Initial version
+2022-03-15  -  v1.1
+2022-04-26  -  v1.2   Fix tools installed on machines

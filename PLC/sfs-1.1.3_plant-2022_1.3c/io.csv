@@ -1,0 +1,231 @@
+1,W1in1,Warehouse In,O,Motor +,0
+1,W1in1,Warehouse In,O,Motor -,1
+1,W1in1,Warehouse In,O,Warehouse In,2
+1,W1in1,Warehouse In,I,Sensor 0,0
+2,Load0,Rotator,O,Motor +,3
+2,Load0,Rotator,O,Motor -,4
+2,Load0,Rotator,O,Rotate -,5
+2,Load0,Rotator,O,Rotate +,6
+2,Load0,Rotator,I,Sensor 0,1
+2,Load0,Rotator,I,Rotate - Sensor,2
+2,Load0,Rotator,I,Rotate + Sensor,3
+3,Load1,Conveyor,O,Motor +,7
+3,Load1,Conveyor,O,Motor -,8
+3,Load1,Conveyor,I,Sensor 0,4
+4,Load2,Conveyor,O,Motor +,9
+4,Load2,Conveyor,O,Motor -,10
+4,Load2,Conveyor,I,Sensor 0,5
+5,W1out0,Warehouse Out,O,Motor +,11
+5,W1out0,Warehouse Out,O,Motor -,12
+5,W1out0,Warehouse Out,I,Sensor 0,6
+5,W1out0,Warehouse Out,R,Warehouse Out,0
+6,W1in0,Warehouse In,O,Motor +,13
+6,W1in0,Warehouse In,O,Motor -,14
+6,W1in0,Warehouse In,O,Warehouse In,15
+6,W1in0,Warehouse In,I,Sensor 0,7
+7,N1,Rotator,O,Motor +,16
+7,N1,Rotator,O,Motor -,17
+7,N1,Rotator,O,Rotate -,18
+7,N1,Rotator,O,Rotate +,19
+7,N1,Rotator,I,Sensor 0,8
+7,N1,Rotator,I,Rotate - Sensor,9
+7,N1,Rotator,I,Rotate + Sensor,10
+8,N2,Rotator,O,Motor +,20
+8,N2,Rotator,O,Motor -,21
+8,N2,Rotator,O,Rotate -,22
+8,N2,Rotator,O,Rotate +,23
+8,N2,Rotator,I,Sensor 0,11
+8,N2,Rotator,I,Rotate - Sensor,12
+8,N2,Rotator,I,Rotate + Sensor,13
+9,N3,Rotator,O,Motor +,24
+9,N3,Rotator,O,Motor -,25
+9,N3,Rotator,O,Rotate -,26
+9,N3,Rotator,O,Rotate +,27
+9,N3,Rotator,I,Sensor 0,14
+9,N3,Rotator,I,Rotate - Sensor,15
+9,N3,Rotator,I,Rotate + Sensor,16
+10,N4,Rotator,O,Motor +,28
+10,N4,Rotator,O,Motor -,29
+10,N4,Rotator,O,Rotate -,30
+10,N4,Rotator,O,Rotate +,31
+10,N4,Rotator,I,Sensor 0,17
+10,N4,Rotator,I,Rotate - Sensor,18
+10,N4,Rotator,I,Rotate + Sensor,19
+11,M11,Machine,O,Motor +,32
+11,M11,Machine,O,Motor -,33
+11,M11,Machine,O,Rotate -,34
+11,M11,Machine,O,Rotate +,35
+11,M11,Machine,O,Tool,36
+11,M11,Machine,O,X -,37
+11,M11,Machine,O,X +,38
+11,M11,Machine,O,Z +,39
+11,M11,Machine,O,Z -,40
+11,M11,Machine,I,Sensor 0,20
+11,M11,Machine,I,Tool Sensor,21
+11,M11,Machine,I,X + Sensor,22
+11,M11,Machine,I,X - Sensor,23
+11,M11,Machine,I,Z + Sensor,24
+11,M11,Machine,I,Z - Sensor,25
+12,M12,Machine,O,Motor +,41
+12,M12,Machine,O,Motor -,42
+12,M12,Machine,O,Rotate -,43
+12,M12,Machine,O,Rotate +,44
+12,M12,Machine,O,Tool,45
+12,M12,Machine,O,X -,46
+12,M12,Machine,O,X +,47
+12,M12,Machine,O,Z +,48
+12,M12,Machine,O,Z -,49
+12,M12,Machine,I,Sensor 0,26
+12,M12,Machine,I,Tool Sensor,27
+12,M12,Machine,I,X + Sensor,28
+12,M12,Machine,I,X - Sensor,29
+12,M12,Machine,I,Z + Sensor,30
+12,M12,Machine,I,Z - Sensor,31
+13,M13,Machine,O,Motor +,50
+13,M13,Machine,O,Motor -,51
+13,M13,Machine,O,Rotate -,52
+13,M13,Machine,O,Rotate +,53
+13,M13,Machine,O,Tool,54
+13,M13,Machine,O,X -,55
+13,M13,Machine,O,X +,56
+13,M13,Machine,O,Z +,57
+13,M13,Machine,O,Z -,58
+13,M13,Machine,I,Sensor 0,32
+13,M13,Machine,I,Tool Sensor,33
+13,M13,Machine,I,X + Sensor,34
+13,M13,Machine,I,X - Sensor,35
+13,M13,Machine,I,Z + Sensor,36
+13,M13,Machine,I,Z - Sensor,37
+14,M23,Machine,O,Motor +,59
+14,M23,Machine,O,Motor -,60
+14,M23,Machine,O,Rotate -,61
+14,M23,Machine,O,Rotate +,62
+14,M23,Machine,O,Tool,63
+14,M23,Machine,O,X -,64
+14,M23,Machine,O,X +,65
+14,M23,Machine,O,Z +,66
+14,M23,Machine,O,Z -,67
+14,M23,Machine,I,Sensor 0,38
+14,M23,Machine,I,Tool Sensor,39
+14,M23,Machine,I,X + Sensor,40
+14,M23,Machine,I,X - Sensor,41
+14,M23,Machine,I,Z + Sensor,42
+14,M23,Machine,I,Z - Sensor,43
+15,M21,Machine,O,Motor +,68
+15,M21,Machine,O,Motor -,69
+15,M21,Machine,O,Rotate -,70
+15,M21,Machine,O,Rotate +,71
+15,M21,Machine,O,Tool,72
+15,M21,Machine,O,X -,73
+15,M21,Machine,O,X +,74
+15,M21,Machine,O,Z +,75
+15,M21,Machine,O,Z -,76
+15,M21,Machine,I,Sensor 0,44
+15,M21,Machine,I,Tool Sensor,45
+15,M21,Machine,I,X + Sensor,46
+15,M21,Machine,I,X - Sensor,47
+15,M21,Machine,I,Z + Sensor,48
+15,M21,Machine,I,Z - Sensor,49
+16,M22,Machine,O,Motor +,77
+16,M22,Machine,O,Motor -,78
+16,M22,Machine,O,Rotate -,79
+16,M22,Machine,O,Rotate +,80
+16,M22,Machine,O,Tool,81
+16,M22,Machine,O,X -,82
+16,M22,Machine,O,X +,83
+16,M22,Machine,O,Z +,84
+16,M22,Machine,O,Z -,85
+16,M22,Machine,I,Sensor 0,50
+16,M22,Machine,I,Tool Sensor,51
+16,M22,Machine,I,X + Sensor,52
+16,M22,Machine,I,X - Sensor,53
+16,M22,Machine,I,Z + Sensor,54
+16,M22,Machine,I,Z - Sensor,55
+17,E2,Conveyor,O,Motor +,86
+17,E2,Conveyor,O,Motor -,87
+17,E2,Conveyor,I,Sensor 0,56
+18,E3,Rotator,O,Motor +,88
+18,E3,Rotator,O,Motor -,89
+18,E3,Rotator,O,Rotate -,90
+18,E3,Rotator,O,Rotate +,91
+18,E3,Rotator,I,Sensor 0,57
+18,E3,Rotator,I,Rotate - Sensor,58
+18,E3,Rotator,I,Rotate + Sensor,59
+19,S1,Conveyor,O,Motor +,92
+19,S1,Conveyor,O,Motor -,93
+19,S1,Conveyor,I,Sensor 0,60
+20,S2,Conveyor,O,Motor +,94
+20,S2,Conveyor,O,Motor -,95
+20,S2,Conveyor,I,Sensor 0,61
+21,W2,Conveyor,O,Motor +,96
+21,W2,Conveyor,O,Motor -,97
+21,W2,Conveyor,I,Sensor 0,62
+22,W3,Rotator,O,Motor +,98
+22,W3,Rotator,O,Motor -,99
+22,W3,Rotator,O,Rotate -,100
+22,W3,Rotator,O,Rotate +,101
+22,W3,Rotator,I,Sensor 0,63
+22,W3,Rotator,I,Rotate - Sensor,64
+22,W3,Rotator,I,Rotate + Sensor,65
+23,W2in1,Warehouse In,O,Motor +,102
+23,W2in1,Warehouse In,O,Motor -,103
+23,W2in1,Warehouse In,O,Warehouse In,104
+23,W2in1,Warehouse In,I,Sensor 0,66
+24,W2out1,Warehouse Out,O,Motor +,105
+24,W2out1,Warehouse Out,O,Motor -,106
+24,W2out1,Warehouse Out,I,Sensor 0,67
+24,W2out1,Warehouse Out,R,Warehouse Out,1
+25,W2out1,Warehouse Out,O,Motor +,107
+25,W2out1,Warehouse Out,O,Motor -,108
+25,W2out1,Warehouse Out,I,Sensor 0,68
+25,W2out1,Warehouse Out,R,Warehouse Out,2
+26,U0,Rotator,O,Motor +,109
+26,U0,Rotator,O,Motor -,110
+26,U0,Rotator,O,Rotate -,111
+26,U0,Rotator,O,Rotate +,112
+26,U0,Rotator,I,Sensor 0,69
+26,U0,Rotator,I,Rotate - Sensor,70
+26,U0,Rotator,I,Rotate + Sensor,71
+27,U1,Pusher,O,Motor +,113
+27,U1,Pusher,O,Motor -,114
+27,U1,Pusher,O,Push +,115
+27,U1,Pusher,O,Push -,116
+27,U1,Pusher,I,Sensor 0,72
+27,U1,Pusher,I,Push + Sensor,73
+27,U1,Pusher,I,Push - Sensor,74
+28,U2,Pusher,O,Motor +,117
+28,U2,Pusher,O,Motor -,118
+28,U2,Pusher,O,Push +,119
+28,U2,Pusher,O,Push -,120
+28,U2,Pusher,I,Sensor 0,75
+28,U2,Pusher,I,Push + Sensor,76
+28,U2,Pusher,I,Push - Sensor,77
+29,U3,Pusher,O,Motor +,121
+29,U3,Pusher,O,Motor -,122
+29,U3,Pusher,O,Push +,123
+29,U3,Pusher,O,Push -,124
+29,U3,Pusher,I,Sensor 0,78
+29,U3,Pusher,I,Push + Sensor,79
+29,U3,Pusher,I,Push - Sensor,80
+30,U11,Roller,I,Sensor 0,81
+31,U12,Roller,I,Sensor 0,82
+32,U13,Roller,I,Sensor 0,83
+34,U21,Roller,I,Sensor 0,84
+35,U22,Roller,I,Sensor 0,85
+36,U23,Roller,I,Sensor 0,86
+38,U31,Roller,I,Sensor 0,87
+39,U32,Roller,I,Sensor 0,88
+40,U33,Roller,I,Sensor 0,89
+42,W1in2,Warehouse In,O,Motor +,125
+42,W1in2,Warehouse In,O,Motor -,126
+42,W1in2,Warehouse In,O,Warehouse In,127
+42,W1in2,Warehouse In,I,Sensor 0,90
+43,U1out,Conveyor,O,Motor +,128
+43,U1out,Conveyor,O,Motor -,129
+43,U1out,Conveyor,I,Sensor 0,91
+44,U2out,Conveyor,O,Motor +,130
+44,U2out,Conveyor,O,Motor -,131
+44,U2out,Conveyor,I,Sensor 0,92
+45,U3out,Conveyor,O,Motor +,132
+45,U3out,Conveyor,O,Motor -,133
+45,U3out,Conveyor,I,Sensor 0,93

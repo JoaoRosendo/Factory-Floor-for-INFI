@@ -17,16 +17,35 @@ import lombok.ToString;
 public class App {
 	
 	static String[] array_ids=new String[] {
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C1",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C2"};
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C6",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C7",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C8",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C9",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C10",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C11",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C12",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C13",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C14",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C15",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C16",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C17",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C18",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C19",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C20",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C21",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C22",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C23",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C24",
+			};
 	
 	static String[] maq_ids= {
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M11_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M12_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M13_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M21_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M22_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M23_pecas_feitas",
 			};
 	
 	static String[] maq_tools= {
@@ -64,21 +83,34 @@ public class App {
 		int ready=1;
 		NodeId nodeId;
 		int nr_pieces=0;
+		String v1=null;
+		String v2=null;
 		for(int j=0;j<day_pieces.size();j++) {
-        	if(day_pieces.get(j).final_form!=0) nr_pieces++;
+        	if(day_pieces.get(j).final_form!=0) nr_pieces++;      	
         }
+		
+		
 		for (int i=0;i<nr_pieces;i++) {
-			System.out.println("ready:"+ready);
-
+			System.out.println("Waiting for <6 pieces on simulator");
+			while(workpieces_count()>=6){};
+			
+			ready=1;
+			System.out.println("Waiting for c5 to be ready");
 			while(ready!=0) {
+				
+				nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
+				v2=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
+				
+				
 				nodeId = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.W1out0_S");
 				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 35).replace(", ", "");
-				System.out.println("C5 empty  "+variable);
-				if(variable.equals("false")) {
+//				System.out.println("C5 status:"+variable);
+				sorter.data_analisys.info.curr_op.setText("Waiting for W1 out to be free");
+				if(variable.equals("false") && v2.equals("-1-1-1-1-1-1")) {
 					ready=0;
 				}
 			}
-			System.out.println("ready:"+ready);
+			//System.out.println("ready:"+ready);
 			nodeId=new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C5"); 
 
 
@@ -99,25 +131,42 @@ public class App {
 			//System.out.println(variable);
 
 			//Check if the sent array and the one we have here are equal variable =
-			variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 47).replace(", ", "");
+	        variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
 			System.out.println("opcua: "+variable);
 			if(variable.equals(machines_s)==true) { 
 				errors++;
 				System.out.println("error at"+i);
 			}
-			
-			while(variable!="000000") {
-				variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31, 44).replace(", ", "");
-				System.out.println("while:"+variable);
+			System.out.println("Waiting for c5 to be ready 2");
+			while(!variable.equals("-1-1-1-1-1-1")) {
+				//Check C5 array
+				variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+		        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
+				//System.out.println("Final while:"+variable);
 				Thread.sleep(100);
 			}
+			System.out.println();
+			System.out.println();
 		}
-		System.out.println(errors);
+		
 
 		return errors;
 	}
     
-    /////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
+    static int workpieces_count() throws InterruptedException, ExecutionException {
+		int counter=0;
+		NodeId nodeId;
+		for (int i=0;i<20;i++) {
+			nodeId=new NodeId(4,array_ids[i]);
+			String variable=client.readValue(0, TimestampsToReturn.Both,nodeId).get().toString().substring(31,53).replace(", ", "");
+			if(!variable.equals("-1-1-1-1-1-1")) counter++;
+		}
+		
+		return counter;
+	}
+
+	/////////////////POSSIVELMENTE FAZER EVENT SUBSCRIPTION//////////////////
     public static int check_ToD() throws UaException, InterruptedException, ExecutionException {
     	//TRY CATCH ROUTINE NEEDED
     	int result=0;
@@ -135,26 +184,27 @@ public class App {
 		
 	}
     
-    public ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
+    public static ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
 		client.connect().get();
 		short total=0;
-		for(int i=0;i<7;i++) {
+		for(int i=0;i<6;i++) {
 		
 			NodeId nodeId_midday = new NodeId(4,maq_ids[i]);
 			
 			//Read array of nr of pieces of each type and save
-			String type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			for(int j=0;i<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+type_count.charAt(j));}
-			for(int j=0;i<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
-			machines.get(i).pieces_total=total;
+			String variable = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).get().toString();//.substring(20,60).replace(", ", "");
+			//System.out.println(variable);
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]")).replace(", ", "");
+	        //System.out.println(variable);
+			for(int j=0;j<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+variable.charAt(j));
+			}
+			for(int j=0;j<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
+			machines.get(i).setPieces_total(total);;
+			//System.out.println("total"+machines.get(i).getPieces_total());
 			total=0;
 			
-			
-			//Read tool in use
-			type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			machines.get(i).tool=Short.parseShort(""+type_count.charAt(5));
 			
 		}
 		
@@ -187,21 +237,25 @@ public class App {
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
 
-        for (int i=0;i<12;i++) {
+        for (int i=0;i<20;i++) {
         	//checks all pieces to see if they're finished
 	        NodeId nodeId = new NodeId(4,array_ids[i]);
 	        //reads the array
-	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(30, 47).replace(", ", "");
-	        
+	        String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString().substring(20,60).replace(", ", "");
+	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]"));
 	        for(int j=0;j<12;j++) {
-	        	if(""+variable.charAt(0)==String.valueOf(day_pieces.get(j).getPieceid())) {
+	        	if((""+variable.charAt(0)).equals( String.valueOf(day_pieces.get(j).getPieceid()))) {
 	        		day_pieces.get(j).setCurr_form(Short.valueOf(""+variable.charAt(1)));
+	        		if(day_pieces.get(j).getCurr_form()==day_pieces.get(j).getFinal_form()) {
+	        			day_pieces.get(j).setFinished((short)1);
+	        		}
 	        	}
 	        }
+	        
 	              
 
-	        System.out.println(variable);
-	        System.out.println(i);
+//	        System.out.println("check_pieces:"+variable);
+//	        System.out.println(i);
         }
         return day_pieces;
     }
