@@ -20,6 +20,10 @@
 	<classpathentry exported="true" kind="lib" path="repository/javafx.swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="repository/javafx.web.jar"/>
 	<classpathentry exported="true" kind="lib" path="repository/milo-master.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-14">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

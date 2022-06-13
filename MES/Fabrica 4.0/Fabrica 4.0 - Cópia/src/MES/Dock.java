@@ -1,18 +1,23 @@
 package MES;
 
 public class Dock {
-	static short[] nr_types;
-	static short total;
-	public static short[] getNr_types() {
+	short[] nr_types;
+	short total;
+	public Dock(short[] nr_types, short total) {
+		super();
+		this.nr_types = nr_types;
+		this.total = total;
+	}
+	public short[] getNr_types() {
 		return nr_types;
 	}
-	public static void setNr_types(short[] nr_types) {
-		Dock.nr_types = nr_types;
+	public void setNr_types(short[] nr_types) {
+		this.nr_types = nr_types;
 	}
-	public static short getTotal() {
+	public short getTotal() {
 		return total;
 	}
-	public static void setTotal(short total) {
-		Dock.total = total;
+	public void setTotal(short total) {
+		this.total = total;
 	}
 }

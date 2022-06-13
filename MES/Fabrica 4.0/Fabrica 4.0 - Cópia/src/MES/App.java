@@ -1,5 +1,7 @@
 package MES;
 
+import static org.mockito.ArgumentMatchers.shortThat;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutionException;
@@ -39,31 +41,7 @@ public class App {
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C23",
 			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.C24",
 			};
-	
-	static String[] maq_ids= {
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M11_pecas_feitas",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M12_pecas_feitas",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M13_pecas_feitas",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M21_pecas_feitas",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M22_pecas_feitas",
-			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M23_pecas_feitas",
-			};
-	
-	static String[] maq_tools= {
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
-			};
-	
-	static String[] dock_ids= {
-			"",
-			"",
-			"",
-			};
-	
+
 	
 	static OpcUaClient client;
 	
@@ -84,7 +62,7 @@ public class App {
 		int ready=1;
 		NodeId nodeId;
 		int nr_pieces=0;
-		String v1=null;
+		
 		String v2=null;
 		for(int j=0;j<day_pieces.size();j++) {
         	if(day_pieces.get(j).final_form!=0) nr_pieces++;      	
@@ -191,60 +169,75 @@ public class App {
 		
 	}
     
-    public static ArrayList<Machine> mach_stats(ArrayList<Machine> machines) throws InterruptedException, ExecutionException{
+    public static short[] mach_stats(Machine machines, NodeId nodeId) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
-		client.connect().get();
-		short total=0;
-		for(int i=0;i<6;i++) {
-		
-			NodeId nodeId_midday = new NodeId(4,maq_ids[i]);
-			
-			//Read array of nr of pieces of each type and save
-			String variable = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).get().toString();//.substring(20,60).replace(", ", "");
-			//System.out.println(variable);
-	        variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]")).replace(", ", "");
-	        //System.out.println(variable);
-			for(int j=0;j<machines.get(i).op_pieces.length;j++) {machines.get(i).op_pieces[j]=Short.parseShort(""+variable.charAt(j));
-			}
-			for(int j=0;j<machines.get(i).op_pieces.length;j++) {total+=machines.get(i).op_pieces[j];}
-			machines.get(i).setPieces_total(total);;
-			//System.out.println("total"+machines.get(i).getPieces_total());
-			total=0;
-			
-			
-		}
-		
-				
-		return machines;
-	}
-    
-    public ArrayList<Dock> dock_stats(ArrayList<Dock> docks) throws InterruptedException, ExecutionException{
+    	short[] a= {0,0,0,0,0,0,0,0,0};
+
+    	//Read array of nr of pieces of each type and save
+    	String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString();//.substring(20,60).replace(", ", "");
+    	//System.out.println(variable);
+    	variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]")).replace(" " , "");
+
+    	StringTokenizer st =new StringTokenizer(variable,",");
+    	String token = st.nextToken();
+    	a[0]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[1]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[2]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[3]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[4]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[5]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[6]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[7]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[8]=Short.valueOf(token);
+
+    	return a;
+    }
+
+    public static short[] dock_stats(Dock dock, NodeId nodeId) throws InterruptedException, ExecutionException{
 
     	//Gets machine counts
-		client.connect().get();
-		short total=0;
-		for(int i=0;i<3;i++) {
-			
-			NodeId nodeId_midday = new NodeId(4,dock_ids[i]);
-			
-			//Read array of nr of pieces of each type and save
-			String type_count = client.readValue(0, TimestampsToReturn.Both, nodeId_midday).toString().substring(29, 31);//!!!!!!!!!!CUT RIGHT WAY
-			for(int j=0;i<docks.get(i).nr_types.length;j++) {docks.get(i).nr_types[j]=Short.parseShort(""+type_count.charAt(j));}
-			for(int j=0;i<docks.get(i).nr_types.length;j++) {total+=docks.get(i).nr_types[j];}
-			docks.get(i).total=total;
-			total=0;
-			
-		}
-		
-				
-		return docks;
-	}
+    	short[] a= {0,0,0,0,0,0,0,0,0};
+
+    	//Read array of nr of pieces of each type and save
+    	String variable = client.readValue(0, TimestampsToReturn.Both, nodeId).get().toString();//.substring(20,60).replace(", ", "");
+    	//System.out.println(variable);
+    	variable=variable.substring(variable.indexOf("[")+1, variable.indexOf("]")).replace(" " , "");
+
+    	StringTokenizer st =new StringTokenizer(variable,",");
+    	String token = st.nextToken();
+    	a[0]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[1]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[2]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[3]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[4]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[5]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[6]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[7]=Short.valueOf(token);
+    	token = st.nextToken();
+    	a[8]=Short.valueOf(token);
+    	
+    	return a;
+    }
     
     public static ArrayList<Piece> check_pieces(ArrayList<Piece> day_pieces) throws UaException, InterruptedException, ExecutionException { 
     	//returns number of finished pieces
         //System.out.println("check pieces||||||||||||||||||||||||||||");
-    	String v[][]=null;
     	for (int i=0;i<20;i++) {
     		//checks all pieces to see if they're finished
     		NodeId nodeId = new NodeId(4,array_ids[i]);
@@ -284,7 +277,7 @@ public class App {
 		String variable;
 		NodeId nodeId1 = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.pieces1_wh1");
 		NodeId nodeId2 = new NodeId(4,"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.pieces2_wh1");
-		Variant v = new Variant(0); DataValue dv = new DataValue(v, null, null); 
+		Variant v = new Variant((short)0); DataValue dv = new DataValue(v, null, null); 
 		variable = client.writeValue(nodeId1,dv).get().toString();
 		variable = client.writeValue(nodeId2,dv).get().toString();
 		int w1_size_aux=0;

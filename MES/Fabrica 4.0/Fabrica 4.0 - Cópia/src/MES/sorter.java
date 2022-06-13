@@ -33,9 +33,11 @@ class UI extends JFrame{
 	JLabel mac1=new JLabel();JLabel mac2=new JLabel();JLabel mac3=new JLabel();JLabel mac4=new JLabel();
 	JLabel mac5=new JLabel();JLabel mac6=new JLabel();
 	
+	JLabel dock1=new JLabel();JLabel dock2=new JLabel();JLabel dock3=new JLabel();
+	
 	public UI(){ 
 		setTitle("User Interface for Daily Information");
-		setSize(800,600);
+		setSize(1000,600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(null);
 		setVisible(true);
@@ -88,7 +90,7 @@ class UI extends JFrame{
 		daily_pieces11.setVisible(true);	
 		this.add(daily_pieces11);
 		
-		curr_op.setBounds(500,10, 200,100);
+		curr_op.setBounds(500,500, 250,20);
 		curr_op.setVisible(true);	
 		this.add(curr_op);
 		
@@ -124,7 +126,19 @@ class UI extends JFrame{
 		mac6.setVisible(true);	
 		this.add(mac6);
 		
-		pieces_ordered.setBounds(500,130, 100,20);
+		dock1.setBounds(450,410, 500,20);
+		dock1.setVisible(true);	
+		this.add(dock1);
+		
+		dock2.setBounds(450,440, 500,20);
+		dock2.setVisible(true);	
+		this.add(dock2);
+		
+		dock3.setBounds(450,470, 500,20);
+		dock3.setVisible(true);	
+		this.add(dock3);
+		
+		pieces_ordered.setBounds(500,90, 100,20);
 		pieces_ordered.setVisible(true);	
 		this.add(pieces_ordered);
 		
@@ -137,7 +151,7 @@ class UI extends JFrame{
 
 public class sorter {
 	static volatile ArrayList<Piece> day_pieces;
-	static volatile warehouse w1 = new warehouse(6, 6);
+	static volatile warehouse w1 = new warehouse(12, 12);
 	static volatile MyThread data_analisys=new MyThread();
 	static volatile int nr_pieces_ordered=0;
 	public static void main(String[] args) throws UaException, InterruptedException, ExecutionException {
@@ -161,8 +175,7 @@ public class sorter {
 		while (true) {
 			nr_finished=0;
 			nr_pieces=0;
-			type_1=0;
-			type_2=0;
+			
 			if (start==1) {				
 				for(int j=0;j<day_pieces.size();j++) {
 			
@@ -177,7 +190,7 @@ public class sorter {
 
 			 if(nr_finished==nr_pieces) {
 				 if(start==1) {
-					 nr_pieces=0;
+					 
 					 data_analisys.info.curr_op.setText("Updating stats on DB");
 					 Database.update_stats_EoRequests(day_pieces);	
 					 System.out.println("Going into Waiting for new orders");
@@ -187,6 +200,24 @@ public class sorter {
 				 System.out.println("Going into getpieces");
 				 
 				 
+				 type_1=0;
+				 type_2=0;
+				 if(start==1) {
+						for(int i=0;i<day_pieces.size();i++) {
+
+							if(day_pieces.get(i).machines[1]==2) {
+								type_2++;
+							}
+							if(day_pieces.get(i).machines[1]==1) {
+								type_1++;
+							}
+
+						}
+						data_analisys.info.curr_op.setText("Insert "+type_1+"P1 and "+type_2+"P2");
+						
+				 }
+				 
+				 App.pieces_ordered(type_1,type_2);
 				 day_pieces=Database.getpieces();
 				 
 				 
@@ -211,21 +242,10 @@ public class sorter {
 				if(start==0) {
 					data_analisys.start();
 				}
-				if(start==1) {
-					for(int i=0;i<day_pieces.size();i++) {
-
-						if(day_pieces.get(i).getCurr_form()==2) {
-							type_2++;
-						}
-						if(day_pieces.get(i).getCurr_form()==1) {
-							type_1++;
-						}
-
-					}
-					data_analisys.info.curr_op.setText("Insert"+type_1+" P1 and "+type_2+"P2");
 				
-					App.pieces_ordered(type_1,type_2);
-				}
+				
+				
+				
 				data_analisys.info.curr_op.setText("Sending order to PLC");
 				//print_daypieces(day_pieces);
 				System.out.println("Going into send_pieces");
@@ -246,7 +266,7 @@ public class sorter {
 					+ "   Client id:"+ day_pieces.get(j).getClientid()+"   priority:" + day_pieces.get(j).priority + "   final_form:" + day_pieces.get(j).final_form
 					+ "   curr_form:" + day_pieces.get(j).curr_form
 					+ "   finished:" + day_pieces.get(j).getFinished() 
-					+ "   Start_time: "+ (day_pieces.get(j).getStart().toEpochMilli()/1000)
+					+ "   Start_time: "+ (day_pieces.get(j).now.millis()/1000+"sec")
 					+ "   machines:");
 			for (i = 0; i < day_pieces.get(j).machines.length; i++)
 				System.out.print(day_pieces.get(j).machines[i]);
@@ -269,7 +289,7 @@ public class sorter {
 		} else if (p1.priority != 0) {
 			aux[1] = p1.getCurr_form();
 			aux[0] = p1.getPieceid();
-			p1.setStart(Instant.now());
+			
 			if (p1.getFinal_form() == 3) {
 				aux[1] = 2;
 				aux[2] = 2;

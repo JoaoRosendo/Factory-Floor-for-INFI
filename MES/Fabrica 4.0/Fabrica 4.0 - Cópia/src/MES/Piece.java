@@ -1,6 +1,6 @@
 package MES;
 
-import java.time.Instant;
+import java.time.*;
 
 public class Piece {
     
@@ -12,11 +12,11 @@ public class Piece {
 	 public short final_form;
 	 public short curr_form=1;
 	 public short finished=0; //1 if finished
-	 public Instant start;
+	 public Clock now= Clock.systemUTC();
 	public double cost;
 
 	public Piece(String clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
-			short curr_form, short finished, Instant start, double cost) {
+			short curr_form, short finished, Clock now, double cost) {
 		super();
 		this.clientid = clientid;
 		this.orderid = orderid;
@@ -26,7 +26,7 @@ public class Piece {
 		this.final_form = final_form;
 		this.curr_form = curr_form;
 		this.finished = finished;
-		this.start = start;
+		this.now = now;
 		this.cost = cost;
 	}
 
@@ -54,15 +54,15 @@ public class Piece {
 		this.finished = finished;
 	}
 
-	public Instant getStart() {
-		return start;
-	}
-
-	public void setStart(Instant start) {
-		this.start = start;
-	}
-
 	
+	public Clock getNow() {
+		return now;
+	}
+
+	public void setNow(Clock now) {
+		this.now = now;
+	}
+
 	public short getPieceid() {
 		return pieceid;
 	}
