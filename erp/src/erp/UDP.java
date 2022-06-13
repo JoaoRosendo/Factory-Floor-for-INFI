@@ -100,12 +100,12 @@ public class UDP extends Thread {
 					e.printStackTrace();
 				}
     			
-    			try {
+    			/*try {
 					db.selectStats();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
     	    } 
     	}
     }  
