@@ -266,7 +266,7 @@ public class sorter {
 					+ "   Client id:"+ day_pieces.get(j).getClientid()+"   priority:" + day_pieces.get(j).priority + "   final_form:" + day_pieces.get(j).final_form
 					+ "   curr_form:" + day_pieces.get(j).curr_form
 					+ "   finished:" + day_pieces.get(j).getFinished() 
-					+ "   Start_time: "+ (day_pieces.get(j).now.millis()/1000+"sec")
+					+ "   Start_time: "+ (day_pieces.get(j).now/1000+"sec")
 					+ "   machines:");
 			for (i = 0; i < day_pieces.get(j).machines.length; i++)
 				System.out.print(day_pieces.get(j).machines[i]);

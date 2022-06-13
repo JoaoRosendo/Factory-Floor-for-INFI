@@ -12,11 +12,11 @@ public class Piece {
 	 public short final_form;
 	 public short curr_form=1;
 	 public short finished=0; //1 if finished
-	 public Clock now= Clock.systemUTC();
+	 public long now;
 	public double cost;
 
 	public Piece(String clientid, short orderid, short pieceid, short[] machines, short priority, short final_form,
-			short curr_form, short finished, Clock now, double cost) {
+			short curr_form, short finished, long now, double cost) {
 		super();
 		this.clientid = clientid;
 		this.orderid = orderid;
@@ -54,14 +54,6 @@ public class Piece {
 		this.finished = finished;
 	}
 
-	
-	public Clock getNow() {
-		return now;
-	}
-
-	public void setNow(Clock now) {
-		this.now = now;
-	}
 
 	public short getPieceid() {
 		return pieceid;
