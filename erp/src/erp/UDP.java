@@ -15,10 +15,11 @@ public class UDP extends Thread {
     	
     	final int PORT = 54321;
     	byte[] buf = new byte[65535];
+    	//Database db = new Database();
     	
-    	UDP thread = new UDP();
-        thread.start();
-	    	
+    	UDP day_thread = new UDP();
+        day_thread.start();
+        
     	try (DatagramSocket dsock = new DatagramSocket(PORT)) {
 			DatagramPacket data = new DatagramPacket(buf, buf.length);
 			
@@ -29,38 +30,50 @@ public class UDP extends Thread {
 			    
 			    XML_Request xml_Request = new XML_Request();
 				xml_Request.run(inputStream);
+				
+				/*MyThread check_mes = new MyThread();
+				check_mes.start();*/
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	    	
+	    
+    	/*while(db.checkEmpty() == false) {
+    		MyThread check_mes = new MyThread();
+    		check_mes.start();
+    	}*/
     }
     
     public void run() { //DAY COUNTER
     	double t0 = System.currentTimeMillis(), t1; 
     	System.out.println("-------------- DAY "+day+" --------------");
+    	
     	Database db = new Database();
     	db.ConnectDB();
+    	
     	try {
 			db.updateDate(day);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	
     	try {
 			db.getPlan();
-		} catch (SQLException e1) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
+    	
     	try {
 			db.startWarehouse();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
-    	while(true) { 
+    	
+    	while(true) { 	
+    		
     		if((t1 = System.currentTimeMillis()) - t0 >= 1000 * 60) { 
     			day++;
     			System.out.println("----------------- DAY "+day+" ----------------"); 
@@ -74,11 +87,11 @@ public class UDP extends Thread {
 				}
     			
     			try {
-    				db.getPlan();
-    			} catch (SQLException e1) {
-    				// TODO Auto-generated catch block
-    				e1.printStackTrace();
-    			}
+					db.getPlan();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			
     			try {
 					db.checkForDelivery();
@@ -88,8 +101,7 @@ public class UDP extends Thread {
 				}
     	    } 
     	}
-    }
-    
+    }  
     
 }
 	

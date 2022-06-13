@@ -100,7 +100,7 @@ public class XML_Request {
                   System.out.println();
                   
                   db.insertOrder(newOrder);
-                  db.getPlan();
+                  //db.getPlan();
                   
               }
           }

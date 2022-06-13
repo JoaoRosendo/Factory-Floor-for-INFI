@@ -72,6 +72,7 @@ public class MPS {
 	    supplier s_P1 = new supplier();
 	    s_P1.SupplierC_P1();
 	    
+	    qty = qty+8;
 	    if(warehouse_p1 < qty) {
 		    if((qty-warehouse_p1) > s_P1.getMinQty()) {
 		    	s_P1.setQty((qty-warehouse_p1));
@@ -98,6 +99,7 @@ public class MPS {
 	    supplier s_P2 = new supplier();
 	    s_P2.SupplierC_P2();
 	    
+	    qty = qty+8;
 	    if(warehouse_p2 < qty) {
 		    if((qty-warehouse_p2) > s_P2.getMinQty()) {
 		    	s_P2.setQty((qty-warehouse_p2));
