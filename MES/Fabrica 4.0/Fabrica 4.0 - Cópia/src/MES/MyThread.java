@@ -4,11 +4,30 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 
 public class MyThread implements Runnable{
 	private final Thread t;
 	UI info=new UI();
 	static volatile ArrayList<Machine> machines=new ArrayList<>();
+	static volatile ArrayList<Dock> docks=new ArrayList<>();
+	static String[] maq_ids= {
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M11_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M12_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M13_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M21_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M22_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.M23_pecas_feitas",
+			};
+	
+	
+	static String[] dock_ids= {
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.PUSHER1_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.PUSHER2_pecas_feitas",
+			"|var|CODESYS Control Win V3 x64.Application.Lista_Vars.PUSHER3_pecas_feitas",
+			};
+	
+	
 	public MyThread() {
 		t= new Thread(this);
 	}
@@ -18,9 +37,14 @@ public class MyThread implements Runnable{
 		short[] a= {0,0,0,0,0,0,0,0,0};
 		int nr_finished=0;
 		Machine p =null;
-		for(int i=0;i<7;i++) {
+		Dock p1 =null;
+		for(int i=0;i<6;i++) {
 			p=new Machine((short)i, (short)0, (short)0, a, (short)0);
 			machines.add(p);
+		}
+		for(int i=0;i<3;i++) {
+			p1=new Dock(a, (short)0);
+			docks.add(p1);
 		}
 		while(true) {
 			nr_pieces=0;
@@ -33,16 +57,42 @@ public class MyThread implements Runnable{
 				 if(sorter.day_pieces.get(j).getFinished()==1) nr_finished++;
 			}
 			
-			try {
-				machines=App.mach_stats(machines);
-			} catch (InterruptedException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (ExecutionException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+			
+			for(int i=0;i<machines.size();i++) {
+				int total=0;
+				NodeId nodeId = new NodeId(4,maq_ids[i]);
+				try {
+					a=App.mach_stats(machines.get(i), nodeId);
+					
+					for(int j=0;j<a.length;j++) {total+=a[j];}
+			    	machines.get(i).setPieces_total((short)total);
+			    	machines.get(i).setOp_pieces(a);
+				} catch (InterruptedException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (ExecutionException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 			}
-				
+			
+			for(int i=0;i<docks.size();i++) {
+				int total=0;
+				NodeId nodeId = new NodeId(4,dock_ids[i]);
+				try {
+					a=App.dock_stats(docks.get(i), nodeId);
+					
+					for(int j=0;j<a.length;j++) {total+=a[j];}
+			    	docks.get(i).setTotal((short)total);
+			    	docks.get(i).setNr_types(a);;
+				} catch (InterruptedException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (ExecutionException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+			}
 			
 			try {
 				sorter.day_pieces=App.check_pieces(sorter.day_pieces);
@@ -58,10 +108,10 @@ public class MyThread implements Runnable{
 				e1.printStackTrace();
 			}			
 			
-			update_gui(info, nr_pieces, nr_finished,machines);
+			update_gui(info, nr_pieces, nr_finished,machines, docks);
 			
 			try {
-				Thread.sleep(500);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -69,50 +119,55 @@ public class MyThread implements Runnable{
 		}
 	}
 	
-	
-private int calculate_optime(Object machine) {
-   
-   
-   	for(int i=0;i<sorter.day_pieces.size();i++) {
-   		if(sorter.day_pieces.get(i).getFinal_form()==0) {
-   			
-   		}
-   	}
-	return 0;
-	}
 	void start() {
-		t.start();
-	}
+        t.start();
+    }
+
 	
 
-	private void update_gui(UI info, int nr_pieces, int nr_finished, ArrayList<Machine> machines2) {
+	private void update_gui(UI info, int nr_pieces, int nr_finished, ArrayList<Machine> machines, ArrayList<Dock> docks2) {
 		info.finished.setText("Nr pieces: "+nr_pieces+"   Nr finished: "+ nr_finished );
 		
-		info.mac1.setText("Machine 1:    P1:"+machines2.get(0).op_pieces[0]+"   P2:"+machines2.get(0).op_pieces[1]+"   P3:"+machines2.get(0).op_pieces[2]+
-				"   P4:"+machines2.get(0).op_pieces[3]+"   P5:"+machines2.get(0).op_pieces[4]+"   P6:"+machines2.get(0).op_pieces[5]+
-				"   P7:"+machines2.get(0).op_pieces[6]+"   P8:"+machines2.get(0).op_pieces[7]+"   P9:"+machines2.get(0).op_pieces[8]
-				+"   Total="	+machines2.get(0).getPieces_total()	);
-		info.mac2.setText("Machine 2:    P1:"+machines2.get(1).op_pieces[0]+"   P2:"+machines2.get(1).op_pieces[1]+"   P3:"+machines2.get(1).op_pieces[2]+
-				"   P4:"+machines2.get(1).op_pieces[3]+"   P5:"+machines2.get(1).op_pieces[4]+"   P6:"+machines2.get(1).op_pieces[5]+
-				"   P7:"+machines2.get(1).op_pieces[6]+"   P8:"+machines2.get(1).op_pieces[7]+"   P9:"+machines2.get(1).op_pieces[8]
-						+"   Total="	+machines2.get(1).getPieces_total());
+		info.dock1.setText("Dock 1:    P1:"+docks.get(0).nr_types[0]+"   P2:"+docks.get(0).nr_types[1]+"   P3:"+docks.get(0).nr_types[2]+
+				"   P4:"+docks.get(0).nr_types[3]+"   P5:"+docks.get(0).nr_types[4]+"   P6:"+docks.get(0).nr_types[5]+
+				"   P7:"+docks.get(0).nr_types[6]+"   P8:"+docks.get(0).nr_types[7]+"   P9:"+docks.get(0).nr_types[8]
+				+"   Total="	+docks.get(0).getTotal()	);
+		info.dock2.setText("Dock 2:    P1:"+docks.get(1).nr_types[0]+"   P2:"+docks.get(1).nr_types[1]+"   P3:"+docks.get(1).nr_types[2]+
+				"   P4:"+docks.get(1).nr_types[3]+"   P5:"+docks.get(1).nr_types[4]+"   P6:"+docks.get(1).nr_types[5]+
+				"   P7:"+docks.get(1).nr_types[6]+"   P8:"+docks.get(1).nr_types[7]+"   P9:"+docks.get(1).nr_types[8]
+						+"   Total="	+docks.get(1).getTotal());
 			
-		info.mac3.setText("Machine 3:    P1:"+machines2.get(2).op_pieces[0]+"   P2:"+machines2.get(2).op_pieces[1]+"   P3:"+machines2.get(2).op_pieces[2]+
-				"   P4:"+machines2.get(2).op_pieces[3]+"   P5:"+machines2.get(2).op_pieces[4]+"   P6:"+machines2.get(2).op_pieces[5]+
-				"   P7:"+machines2.get(2).op_pieces[6]+"   P8:"+machines2.get(2).op_pieces[7]+"   P9:"+machines2.get(2).op_pieces[8]
-						+"   Total="	+machines2.get(2).getPieces_total());
-		info.mac4.setText("Machine 4:    P1:"+machines2.get(3).op_pieces[0]+"   P2:"+machines2.get(3).op_pieces[1]+"   P3:"+machines2.get(3).op_pieces[2]+
-				"   P4:"+machines2.get(3).op_pieces[3]+"   P5:"+machines2.get(3).op_pieces[4]+"   P6:"+machines2.get(3).op_pieces[5]+
-				"   P7:"+machines2.get(3).op_pieces[6]+"   P8:"+machines2.get(3).op_pieces[7]+"   P9:"+machines2.get(3).op_pieces[8]
-						+"   Total="	+machines2.get(3).getPieces_total());
-		info.mac5.setText("Machine 5:    P1:"+machines2.get(4).op_pieces[0]+"   P2:"+machines2.get(4).op_pieces[1]+"   P3:"+machines2.get(4).op_pieces[2]+
-				"   P4:"+machines2.get(4).op_pieces[3]+"   P5:"+machines2.get(4).op_pieces[4]+"   P6:"+machines2.get(4).op_pieces[5]+
-				"   P7:"+machines2.get(4).op_pieces[6]+"   P8:"+machines2.get(4).op_pieces[7]+"   P9:"+machines2.get(4).op_pieces[8]
-						+"   Total="	+machines2.get(4).getPieces_total());
-		info.mac6.setText("Machine 6:    P1:"+machines2.get(5).op_pieces[0]+"   P2:"+machines2.get(5).op_pieces[1]+"   P3:"+machines2.get(5).op_pieces[2]+
-				"   P4:"+machines2.get(5).op_pieces[3]+"   P5:"+machines2.get(5).op_pieces[4]+"   P6:"+machines2.get(5).op_pieces[5]+
-				"   P7:"+machines2.get(5).op_pieces[6]+"   P8:"+machines2.get(5).op_pieces[7]+"   P9:"+machines2.get(5).op_pieces[8]
-						+"   Total="	+machines2.get(5).getPieces_total());
+		info.dock3.setText("Dock 3:    P1:"+docks.get(2).nr_types[0]+"   P2:"+docks.get(2).nr_types[1]+"   P3:"+docks.get(2).nr_types[2]+
+				"   P4:"+docks.get(2).nr_types[3]+"   P5:"+docks.get(2).nr_types[4]+"   P6:"+docks.get(2).nr_types[5]+
+				"   P7:"+docks.get(2).nr_types[6]+"   P8:"+docks.get(2).nr_types[7]+"   P9:"+docks.get(2).nr_types[8]
+						+"   Total="	+docks.get(2).getTotal());
+		
+		
+		info.mac1.setText("Machine 1:    P1:"+machines.get(0).op_pieces[0]+"   P2:"+machines.get(0).op_pieces[1]+"   P3:"+machines.get(0).op_pieces[2]+
+				"   P4:"+machines.get(0).op_pieces[3]+"   P5:"+machines.get(0).op_pieces[4]+"   P6:"+machines.get(0).op_pieces[5]+
+				"   P7:"+machines.get(0).op_pieces[6]+"   P8:"+machines.get(0).op_pieces[7]+"   P9:"+machines.get(0).op_pieces[8]
+				+"   Total="	+machines.get(0).getPieces_total()	);
+		info.mac2.setText("Machine 2:    P1:"+machines.get(1).op_pieces[0]+"   P2:"+machines.get(1).op_pieces[1]+"   P3:"+machines.get(1).op_pieces[2]+
+				"   P4:"+machines.get(1).op_pieces[3]+"   P5:"+machines.get(1).op_pieces[4]+"   P6:"+machines.get(1).op_pieces[5]+
+				"   P7:"+machines.get(1).op_pieces[6]+"   P8:"+machines.get(1).op_pieces[7]+"   P9:"+machines.get(1).op_pieces[8]
+						+"   Total="	+machines.get(1).getPieces_total());
+			
+		info.mac3.setText("Machine 3:    P1:"+machines.get(2).op_pieces[0]+"   P2:"+machines.get(2).op_pieces[1]+"   P3:"+machines.get(2).op_pieces[2]+
+				"   P4:"+machines.get(2).op_pieces[3]+"   P5:"+machines.get(2).op_pieces[4]+"   P6:"+machines.get(2).op_pieces[5]+
+				"   P7:"+machines.get(2).op_pieces[6]+"   P8:"+machines.get(2).op_pieces[7]+"   P9:"+machines.get(2).op_pieces[8]
+						+"   Total="	+machines.get(2).getPieces_total());
+		info.mac4.setText("Machine 4:    P1:"+machines.get(3).op_pieces[0]+"   P2:"+machines.get(3).op_pieces[1]+"   P3:"+machines.get(3).op_pieces[2]+
+				"   P4:"+machines.get(3).op_pieces[3]+"   P5:"+machines.get(3).op_pieces[4]+"   P6:"+machines.get(3).op_pieces[5]+
+				"   P7:"+machines.get(3).op_pieces[6]+"   P8:"+machines.get(3).op_pieces[7]+"   P9:"+machines.get(3).op_pieces[8]
+						+"   Total="	+machines.get(3).getPieces_total());
+		info.mac5.setText("Machine 5:    P1:"+machines.get(4).op_pieces[0]+"   P2:"+machines.get(4).op_pieces[1]+"   P3:"+machines.get(4).op_pieces[2]+
+				"   P4:"+machines.get(4).op_pieces[3]+"   P5:"+machines.get(4).op_pieces[4]+"   P6:"+machines.get(4).op_pieces[5]+
+				"   P7:"+machines.get(4).op_pieces[6]+"   P8:"+machines.get(4).op_pieces[7]+"   P9:"+machines.get(4).op_pieces[8]
+						+"   Total="	+machines.get(4).getPieces_total());
+		info.mac6.setText("Machine 6:    P1:"+machines.get(5).op_pieces[0]+"   P2:"+machines.get(5).op_pieces[1]+"   P3:"+machines.get(5).op_pieces[2]+
+				"   P4:"+machines.get(5).op_pieces[3]+"   P5:"+machines.get(5).op_pieces[4]+"   P6:"+machines.get(5).op_pieces[5]+
+				"   P7:"+machines.get(5).op_pieces[6]+"   P8:"+machines.get(5).op_pieces[7]+"   P9:"+machines.get(5).op_pieces[8]
+						+"   Total="	+machines.get(5).getPieces_total());
 				
 		
 		
