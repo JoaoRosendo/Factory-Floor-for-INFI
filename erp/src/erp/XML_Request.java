@@ -41,7 +41,7 @@ public class XML_Request {
           doc.getDocumentElement().normalize();
 
           //System.out.println("Root Element : " + doc.getDocumentElement().getNodeName());
-          System.out.println("------");
+          System.out.println();
        
           NodeList client = doc.getElementsByTagName("Client");          
           for (int temp = 0; temp < client.getLength(); temp++) {
@@ -66,6 +66,7 @@ public class XML_Request {
               
             	  Element el = (Element) node;
                   
+            	  System.out.println("---- INCOMING ORDER ----");
                   String Number = (el.getAttributeNode("Number")).toString();
                   String WorkPiece = (el.getAttributeNode("WorkPiece")).toString();
                   String Quantity = (el.getAttributeNode("Quantity")).toString();
@@ -99,6 +100,8 @@ public class XML_Request {
                   System.out.println();
                   
                   db.insertOrder(newOrder);
+                  db.getPlan();
+                  
               }
           }
 

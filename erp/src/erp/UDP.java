@@ -39,11 +39,47 @@ public class UDP extends Thread {
     public void run() { //DAY COUNTER
     	double t0 = System.currentTimeMillis(), t1; 
     	System.out.println("-------------- DAY "+day+" --------------");
+    	Database db = new Database();
+    	db.ConnectDB();
+    	try {
+			db.updateDate(day);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	try {
+			db.getPlan();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
     	while(true) { 
     		if((t1 = System.currentTimeMillis()) - t0 >= 1000 * 60) { 
     			day++;
-    			System.out.println("-------------- DAY "+day+" --------------"); 
-    	        t0 = t1; 
+    			System.out.println("----------------- DAY "+day+" ----------------"); 
+    			t0 = t1; 
+    			
+    			try {
+					db.updateDate(day);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    			try {
+    				db.getPlan();
+    			} catch (SQLException e1) {
+    				// TODO Auto-generated catch block
+    				e1.printStackTrace();
+    			}
+    			
+    			try {
+					db.checkForDelivery();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	    } 
     	}
     }
