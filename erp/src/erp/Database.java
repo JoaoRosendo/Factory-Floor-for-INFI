@@ -2,9 +2,11 @@ package erp;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 
 /*
@@ -76,6 +78,7 @@ public class Database {
 		order.setId(rs.getInt(1));
 		
 		productionPlan(order);
+		
 	}
 	
 	public int updateDate(int day) throws SQLException {
@@ -114,6 +117,7 @@ public class Database {
 		MPS mps = new MPS(); 
 		supplier s = new supplier();
 		plan prod_plan = new plan();
+		float cost = 0;
 		
 		prod_plan.setId(order.getId());
 		prod_plan.setNumber(order.getNumber());
@@ -133,7 +137,7 @@ public class Database {
 		s = mps.orderPieces(prod_plan.getStartingForm(), prod_plan.getQty());
 		int pieces_ordered = s.getQty();
 		
-		float cost = 0;
+		cost = cost(prod_plan.getId(), s, 0);
 			
 		sql = "INSERT INTO production_plan (order_id,number,client,final_form,starting_piece,quantity,start_date,days_to_finish,warehouse_pieces,pieces_ordered,cost) "
         		+ "VALUES ("+prod_plan.getId()+","
@@ -241,9 +245,25 @@ public class Database {
 			empty = true;
 			Dd = getDate();
 		}
-		
 		return empty;
 	}
+	
+	/*public void selectStats() throws SQLException {
+		Connection c = ConnectDB();
+		Statement stmt = c.createStatement();
+		int id = 0;
+		int date = 0;
+		String client = null;
+		
+		String sql = "SELECT * FROM day_stats;";
+		ResultSet rs = stmt.executeQuery(sql);
+		while(rs.next()) {
+			id = rs.getInt("id");
+			client = rs.getString("client");
+			date = rs.getInt("date");
+		}
+		insertCost(id, s, client, date);
+	}*/
 	
 	public order getOrder(int id) throws SQLException {
 		Connection c = ConnectDB();
@@ -342,18 +362,18 @@ public class Database {
 		}
 	}
 	
-	public float cost(plan plan, supplier s, int Dd) throws SQLException {
+	public float cost(int id, supplier s, int Dd) throws SQLException {
 		int Pt = 0; //production time in secs
 		int penalty = 0;
 		int Rc = s.getPrice()*s.getQty(); //material raw cost
 		int Ad = s.getDlvrDate()-1;
 		
-		order order = getOrder(plan.getId());
+		order order = getOrder(id);
 		
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
 		
-		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece, date FROM day_stats WHERE orderid ='"+plan.getId()+"';");
+		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece, date FROM day_stats WHERE orderid ='"+order.getId()+"';");
 		while(rs.next()) {
 			Pt = rs.getInt("avg_time_piece");
 			Dd = rs.getInt("date");
@@ -362,25 +382,54 @@ public class Database {
 		int Pc = Pt * 1;//production cost
 		int Dc = Rc + (Dd - Ad);
 		
-		if(Dd > plan.getDueDate()) penalty = order.getLatePenalty()*(Dd-plan.getDueDate());
-		else penalty = order.getEarlyPenalty()*(plan.getDueDate()-Dd);
+		if(Dd > order.getDueDate()) penalty = order.getLatePenalty()*(Dd-order.getDueDate());
+		else penalty = order.getEarlyPenalty()*(order.getDueDate()-Dd);
 		
 		int Tc = (Rc + Pc + Dc) + penalty; //total cost Tc = Rc + Pc + Dc
 		
-		insertCost(order.getId(), order.getNumber(), order.getClient(), Tc);
+		//insertCost(order.getId(), order.getNumber(), order.getClient(), Tc);
 		
 		return Tc;
 	}
 	
-	public void insertCost(int id, int number, String client, float Tc) throws SQLException {
+	public float insertCost(int id, supplier s, String client, int Dd) throws SQLException {
 		Connection c = ConnectDB();
 		Statement stmt = c.createStatement();
 		
-		String sql = "INSERT costs (id,number,client,cost) VALUES ('"+id+"','"+number+"','"+client+"','"+Tc+"');";
+		int Pt = 0; //production time in secs
+		int penalty = 0;
+		int Rc = s.getPrice()*s.getQty(); //material raw cost
+		int Ad = s.getDlvrDate()-1;
+		
+		order order = getOrder(id);
+		
+		ResultSet rs = stmt.executeQuery( "SELECT avg_time_piece, date FROM day_stats WHERE orderid ='"+order.getId()+"';");
+		while(rs.next()) {
+			Pt = rs.getInt("avg_time_piece");
+			Dd = rs.getInt("date");
+		}
+		
+		int Pc = Pt * 1;//production cost
+		int Dc = Rc + (Dd - Ad);
+		
+		if(Dd > order.getDueDate()) penalty = order.getLatePenalty()*(Dd-order.getDueDate());
+		else penalty = order.getEarlyPenalty()*(order.getDueDate()-Dd);
+		
+		int Tc = (Rc + Pc + Dc) + penalty; //total cost Tc = Rc + Pc + Dc
+		
+		String sql = "INSERT costs (id,number,client,cost) VALUES ('"+id+"','"+order.getNumber()+"','"+client+"','"+Tc+"');";
+		stmt.executeUpdate(sql);
+		
+		return Tc;
+	}
+	
+	public void updateCost(int id, float Tc) throws SQLException {
+		Connection c = ConnectDB();
+		Statement stmt = c.createStatement();
+		
+		String sql = "UPDATE costs WHERE id = '"+id+"' SET cost = "+Tc+";";
+		
 		stmt.executeUpdate(sql);
 	}
-
-	
-	
 	
 }
